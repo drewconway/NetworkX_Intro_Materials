@@ -1,7 +1,7 @@
 %
-%  beamer_template.tex
+%  untitled
 %
-%  Created by Drew Conway on 2010-01-22.
+%  Created by Drew Conway on 2010-05-24.
 % 
 %
 \documentclass[xcolor=dvipsnames, 9pt]{beamer}
@@ -35,13 +35,13 @@
 %   citecolor=darkblue}
 
 \usepackage{beamerthemesplit}
-\usetheme{Warsaw}
-%\usecolortheme[named=Brown]{structure} 
+\usetheme{Copenhagen}
+\usecolortheme[named=Violet]{structure} 
 \setbeamertemplate{navigation symbols}{}
 \setbeamertemplate{itemize items}[triangle]
 \setbeamertemplate{enumerate items}[default]
 %\setbeameroption{show notes on second screen}
-%\logo{\includegraphics[width = 2cm]{nyulogo.png}}
+% \logo{\includegraphics[width = 2cm]{../images/logos/500px-NYU_logo.png}}
 
 \newcommand{\R}{\mathbb{R}}
 \renewcommand{\d}{\mathsf{d}}
@@ -49,9 +49,10 @@
 \newcommand{\E}{\mathsf{E}}
 \newcommand{\bb}{\mathbf}
 
-\title{ New Beamer Presentation}
-\author{Drew Conway}
-\date{\today}
+\title{Module II - Why do SNA in NetworkX}
+\author{Drew Conway --- Department of Politics}
+\institute{\includegraphics[width = 4cm]{../images/logos/500px-NYU_logo.png}}
+\date{June 29, 2010}
 
 \begin{document} 
 
@@ -59,59 +60,12 @@
   \titlepage  
 \end{frame}
 
-\section{Introductions} % (fold)
-\label{sec:introductions}
-
-% section introductions (end)
-
-\begin{frame}[plain]
-	\frametitle{Introduction}
-	I usually have the title and introduction slides in the \texttt{plain} format, and then the rest in \texttt{fragile}
+\begin{frame}
+	\frametitle{Agenda for Module II}
+	Speed and scalability
 	\begin{itemize}
-	   \item I also use a lot of itemized lists
+	   \item 
 	\end{itemize}
 \end{frame}
-
-\subsection{Using columns} % (fold)
-\label{sub:using_columns}
-
-\begin{frame}[fragile]
-    \frametitle{Sectioning and columns}
-    I also like to use sections and subsections to call out where in the talk I am.
-    \vspace{3cm}
-    \begin{columns}
-        \column{0.55\textwidth}
-        Columns are also great for side-by-side comparisons
-        \column{0.45\textwidth}
-        So I use those a lot too
-    \end{columns}
-\end{frame}
-
-% subsection using_columns (end)
-
-\subsection{Code Examples} % (fold)
-\label{sub:code_examples}
-
-\begin{frame}[fragile]
-    \frametitle{Template for code example}
-    I like to use code blocks to call out examples, and teh \texttt{alert} and \texttt{uncover} functions
-        \uncover<1->{In Python the \alert{dict} type is a data structure that represents a key$\rightarrow$value mapping}
-        \uncover<2->{\begin{block}{Working with the dict type}}
-            \begin{code}
-    \uncover<2->{\alert<2>{\# Keys and values can be of any data type}}
-    \uncover<2->{>>> fruit\_dict=\{"apple":1,"orange":[0.23,0.11],"banana":True \}} \newline
-    \uncover<3->{\alert<3>{\# Can retrieve the keys and values as Python lists (vector)}
-    >>> fruit\_dict.keys()
-    ["orange","apple","banana"]} \newline
-    \uncover<4->{\alert<4>{\# Or create a (key,value) tuple}
-    >>> fruit\_dict.items()
-    [("orange",[0.23,0.11]),("apple",1),("Banana",True)]}
-    \uncover<5->{\alert<5>{\# This becomes especially useful when you master Python ``list comprehension''}}
-                \end{code}
-            \end{block}
-    \uncover<6->{The Python dictionary is an extremely flexible and useful data structure, making it one of the primary advantages of Python over other languages}
-\end{frame}
-
-% subsection code_examples (end)
 
 \end{document}
