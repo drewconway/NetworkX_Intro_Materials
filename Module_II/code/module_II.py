@@ -85,8 +85,8 @@ def main():
     # bar_plot_1(d)
     
     # 2.0 Create NetowrkX objects with time-series data
-    # g1=time_series(100,.25)
-    # write_edgelist(g1,'time_series.txt',data=True)
+    g1=time_series(100,.25)
+    write_edgelist(g1,'../../data/time_series.txt',data=True)
 
     # 3.0 Load Sampson monastery data and output as DOT
     g2=read_edgelist("../../data/samp_like_el.txt",delimiter="\t",create_using=DiGraph())
