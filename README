@@ -1,0 +1,9 @@
+### README ###
+These files are support material for "NetworkX introduction: Hacking social networks using the Python programming language," a workshop by Aric Hagberg (Los Alamos National Laboratory) and Drew Conway (New York University) for the 2010 Sunbelt Conference on Social Networks.
+
+### LICENSE INFORMATION ###
+All files are open-source, and licensed under the General Purpose License (GPL) v3.  For more information on GPLv3 see: http://www.gnu.org/licenses/gpl.html
+
+### CONTANT ###
+Aric Hagberg:   hagberg@lanl.gov
+Drew Conway:    drew.conway@nyu.edu
