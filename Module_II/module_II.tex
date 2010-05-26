@@ -63,19 +63,18 @@
 
 \begin{frame}
 	\frametitle{Agenda for Module II}
-	Speed and scalability
+	Speed, Scalability \& Graph Types
 	\begin{itemize}
 	   \item Why speed and scalability matter
-	   \item \texttt{NetworkX} is designed for large data sets
-	   \item Comparing \texttt{NetworkX} to other SNA tools
+	   \item Comparing \texttt{NetworkX} to other SNA tools 
+	   \item What can be a ``graph'' in \texttt{NetworkX}
 	\end{itemize}
 	\uncover<2->{How \texttt{NetworkX} complements Python's scientific computing suite
 	\begin{itemize}
-	   \item SciPy/NumPy
-	   \item Matplotlib
-	   \item and others...
-	\end{itemize}
-	}
+	   \item \texttt{SciPy}/\texttt{NumPy}
+	   \item \texttt{Matplotlib}
+	   \item GraphViz
+	\end{itemize}}
 	\uncover<3->{Getting data in and out of \texttt{NetworkX}
 	\begin{itemize}
 	   \item I/O basics
@@ -84,8 +83,7 @@
 	       \item Directly from the web
 	       \item External databases
 	   \end{itemize}
-	\end{itemize}
-	}
+	\end{itemize}}
 \end{frame}
 
 \section{Speed and scalability} % (fold)
@@ -98,7 +96,7 @@
     \frametitle{Why should we worry about scalability?}
     The size of networks being studying has increased rapidly over the years...
     \begin{center}
-        \includegraphics[scale=.37]{../images/figures/net_size_evo.png}
+        \includegraphics[scale=.35]{../images/figures/net_size_evo.png}
     \end{center}
     \uncover<2->{\alert{As network data becomes more readily available this trend will continue!}}
 \end{frame}
@@ -106,31 +104,31 @@
 \begin{frame}[fragile]
     \frametitle{How network size affects tools}
     While the data continues to scale up, many tools have not kept pace
-    \vspace{2mm}
     \begin{center}
-        \begin{tabular}{lcc}
-            \multicolumn{3}{c}{\LARGE{Standard Tool Limitations}} \\ \hline\hline
-            Tool & Node Limit & Platforms \\ \hline
-            UCINet & \sim V=5K & Windows only\\
-            Pajek & \sim V=100K & Windows only\\
-            Statnet & \sim V= & Multi-platform \\
-            ORA & \sim V=  & Window \& Linux
+        \begin{tabular}{clll}
+            \multicolumn{4}{c}{\Large{Standard Network Analysis Tools}} \\ \hline\hline
+            & \textbf{Tool} & \textbf{Base Algorithms} & \textbf{Platforms} \\ \hline
+            \multirow{4}{*}{\textbf{Stand alone}} & UCINet & V=10K limit & Windows only \\
+            & Pajek & V=100K limit & Windows only\\
+            & ORA & C++/Java & Windows \& Linux \\
+            & NetworkWorkbench & Java & Multi-platform \\ \hline
+            \multirow{4}{*}{\textbf{Libraries}} & Statnet & R & Multi-platform \\
+            & JUNG & Java & Multi-platform \\ 
+            & \alert<2>{igraph} & \alert<2>{C/Fortran} & \alert<2>{Multi-platform} \\
+            & \alert<2>{NetworkX} & \alert<2>{C/Fortran} & \alert<2>{Multi-platform}
         \end{tabular}
-        \uncover<2->{\begin{columns}
+        \uncover<3->{\begin{columns}
             \column{.5\textwidth}
             \texttt{NetworkX} is designed to handle data sets of the scale being generated today
             \begin{itemize}
-                \item 10's of millions or nodes and 100's of millions of edges
-                \item Can read network data from local files, or from external sources
-                \begin{itemize}
-                    \item Internet
-                    \item Relational databases 
-                \end{itemize}
-                \item Inherently mutli-platform
+                \scriptsize{\item 10M's nodes and 100M's edges
+                \item Read network data from local files, or from external sources
+                \item Inherently multi-platform}
             \end{itemize}
             \column{.5\textwidth}
             \begin{center}
-                \includegraphics[scale=.21]{../images/networks/lanl_routes.png}
+                \includegraphics[clip,trim=4cm 4cm 4cm 4cm,width=2cm]{../images/networks/lanl_routes.png} \hspace{2mm}
+                \includegraphics[clip,trim=4cm 4cm 4cm 4cm,width=2cm]{../images/networks/random_geometric_graph.png}
             \end{center}
         \end{columns}}
     \end{center}
@@ -234,7 +232,6 @@ for i in xrange(num_nodes):
         \uncover<8->{All graphics are highly customizable and professional publication ready}
     \end{columns}
     \vspace{1mm}
-    \uncover<9->{\alert{\texttt{NetworkX} uses this entire suite to store, analyze and visualize networks}}
 \end{frame}
 
 % subsection scipy_numpy_and_matplotlib (end)
@@ -287,8 +284,39 @@ Average out degree:    3.0556
 \section{Data I/O from multiple sources} % (fold)
 \label{sec:data_i_o_from_multiple_sources}
 
-\subsection{Loading data from the Internet} % (fold)
-\label{sub:loading_data_from_the_internet}
+\subsection{Data I/O Basics} % (fold)
+\label{sub:data_i_o_basics}
+
+\begin{frame}[fragile]
+    \frametitle{Getting local data into \texttt{NetworkX}}
+    Getting data into \texttt{NetworkX} is as simple as a single line of code:
+    \begin{block}{Loading local data file}
+        \begin{code}
+>>> G=read_edgelist("my_data.txt")
+        \end{code}
+    \end{block}
+    \uncover<2->{Like many other network analysis platforms, \texttt{NetworkX} can parse a wide variety of network data types
+    \begin{center}
+        \begin{tabular}{cll}
+            \multicolumn{3}{c}{\Large{Readable and Writeable Formats in NX}} \\ \hline \hline
+            & \textbf{Format} & \textbf{Description} \\ \hline
+            \multirow{3}{*}{\textbf{Standard}} & Edge list & 2 column, source\rightarrow target \\
+            & Adjacency list & Each row 1st column as out-degree \\
+            & Pajek & Edge list + node and edge attr \\ \hline
+            \multirow{6}{*}{\textbf{Exotic}} & GML & Similar to DOT \\
+            & GraphML & XML implementation \\
+            & Pickle & Standard Python text output \\
+            & LEDA & Between edge list and Pajek \\
+            & YAML & Readable data serialization \\
+            & SparseGraph6 & Adjacency list variant
+        \end{tabular}
+    \end{center}}
+\end{frame}
+
+% subsection data_i_o_basics (end)
+
+\subsection{Loading data from external sources} % (fold)
+\label{sub:loading_data_from_external_sources}
 
 \begin{frame}[fragile]
     \frametitle{Network data available on the Internet}
@@ -297,7 +325,7 @@ Average out degree:    3.0556
         \centering
         \scriptsize{
         \begin{tabular*}{.99\textwidth}{c|l|l}
-        Service & Data & API Docs \\ \hline \hline
+        \textbf{Service} & \textbf{Data} & \textbf{API Docs} \\ \hline \hline
         \includegraphics[height=4mm]{../images/logos/twitter_logo.png} & Following(ers), @-replies, date/time/geo & \url{http://apiwiki.twitter.com/} \\ \hline
         \includegraphics[height=4mm]{../images/logos/facebook_logo.jpg} & Friends, Wall Posts, date/time & \url{http://developers.facebook.com/docs/api} \\ \hline
         \includegraphics[height=4mm]{../images/logos/Newgooglelogo.png} & All SocialGraph relationships & \url{http://code.google.com/apis/socialgraph/} \\ \hline
@@ -312,11 +340,51 @@ Average out degree:    3.0556
         \item Data formats are generally JSON, Atom, XML, or some combination
         \item Python has built-in parsers for all of these data types, which can easily be represented in \texttt{NetworkX}}
     \end{itemize}}
+    \uncover<3->{\alert{Next, we will go over an example of building network data using Google's SocialGraph API}}
 \end{frame}
 
+\begin{frame}[fragile]
+    \frametitle{Load data from databases}
+    Along with the ability to parse data from online API's, NetworkX can create graphs from network data stored in various database formats
+    \begin{itemize}
+        \item All database platforms have either native or third-party libraries that allow read and write access from Python
+    \end{itemize}
+    \begin{center}
+        \uncover<2->{\begin{tabular}{cll}
+            \multicolumn{3}{c}{\Large{Ope-Source DB's Supported in Python}} \\ \hline \hline
+            & \textbf{Database} & \textbf{Python Library} \\ \hline
+            \multirow{3}{*}{\textbf{SQL}} & MySQL & MySQLdb \\
+            & PosgreSQL & PyGreSQL \\
+            & SQLite & sqlite3 \\ \hline
+            \multirow{3}{*}{\textbf{NoSQL}} & Neo4j & Neo4j.py \\
+            & MongoDB & PyMongo \\
+            & CouchDB & couchdb-python 
+        \end{tabular}}
+    \end{center}
+    \uncover<3->{\begin{itemize}
+        \item This is just a small glance of all possible Python$\rightarrow$ DB bindings
+        \item \alert{Next, we will go over an example of building a network }
+    \end{itemize}}
+\end{frame}
 
-% subsection loading_data_from_the_internet (end)
+% subsection loading_data_from_external_sources (end)
 
 % section data_i_o_from_multiple_sources (end)
+
+\begin{frame}[fragile]
+    \frametitle{Module II Review}
+    Why use \texttt{NetworkX} to do SNA?
+    \begin{enumerate}
+        \uncover<2->{\item Unlike many other tools, NX is designed to handle data on a scale relevant to modern problems}
+        \uncover<3->{\item Most of the core algorithms in NX rely on extremely fast legacy code}
+        \uncover<4->{\item Highly flexible graph implementations (a graph can be anything!)}
+        \uncover<5->{\item Extensive set of native readable and writable formats}
+        \uncover<6->{\item Takes advantage of Python's ability to pull data from the Internet or databases}
+    \end{enumerate}
+    \begin{center}
+        \uncover<7>{\Huge{Questions?}}
+    \end{center}
+\end{frame}
+
 
 \end{document}
