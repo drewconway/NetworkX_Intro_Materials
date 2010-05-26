@@ -40,7 +40,7 @@ def bar_plot_1(data):
     P.title("Evolution of network data size over time",fontsize="x-large")
     P.xlabel("Network data sets (year published)",fontsize="large")
     P.ylabel("Number of vertices [log(N)]",fontsize="large")
-    text_color="darkblue"
+    text_color="black"
     for i in range(len(y_data)):
         if i<2:
             P.text(pos[i]+0.01,y_data[i]+5,int_to_scinot(y_data[i]),color=text_color)
@@ -81,8 +81,8 @@ def time_series(num_nodes,p):
         
 def main():
     # 1.0 Data on the expansion of network data sizes over time
-    # d=[("Sampson\n(1975)",18),("Zachary\n(1977)",34),("Neural nets\n(1986)",296),("Power grid\n(1998)",4940),("Actor collaboration\n(1999)",212250),("Twitter scrape\n(2008)",2700000)]
-    # bar_plot_1(d)
+    d=[("Sampson\n(1975)",18),("Zachary\n(1977)",34),("Neural nets\n(1986)",296),("Power grid\n(1998)",4940),("Actor collaboration\n(1999)",212250),("Twitter scrape\n(2008)",2700000)]
+    bar_plot_1(d)
     
     # 2.0 Create NetowrkX objects with time-series data
     g1=time_series(100,.25)
