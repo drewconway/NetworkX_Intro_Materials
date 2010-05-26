@@ -50,7 +50,7 @@
 \newcommand{\E}{\mathsf{E}}
 \newcommand{\bb}{\mathbf}
 
-\title{Module II - Why do SNA in NetworkX}
+\title{Module II - Why do SNA in \texttt{NetworkX}}
 \author{Drew Conway --- Department of Politics}
 \institute{\includegraphics[width = 4cm]{../images/logos/500px-NYU_logo.png}}
 \date{June 29, 2010}
@@ -66,17 +66,17 @@
 	Speed and scalability
 	\begin{itemize}
 	   \item Why speed and scalability matter
-	   \item NetworkX is designed for large data sets
-	   \item Comparing NetworkX to other SNA tools
+	   \item \texttt{NetworkX} is designed for large data sets
+	   \item Comparing \texttt{NetworkX} to other SNA tools
 	\end{itemize}
-	\uncover<2->{How NetworkX complements Python's scientific computing suite
+	\uncover<2->{How \texttt{NetworkX} complements Python's scientific computing suite
 	\begin{itemize}
 	   \item SciPy/NumPy
 	   \item Matplotlib
 	   \item and others...
 	\end{itemize}
 	}
-	\uncover<3->{Getting data in and out of NetworkX
+	\uncover<3->{Getting data in and out of \texttt{NetworkX}
 	\begin{itemize}
 	   \item I/O basics
 	   \item Pulling non-local data
@@ -118,7 +118,7 @@
         \end{tabular}
         \uncover<2->{\begin{columns}
             \column{.5\textwidth}
-            NetworkX is designed to handle data sets of the scale being generated today
+            \texttt{NetworkX} is designed to handle data sets of the scale being generated today
             \begin{itemize}
                 \item 10's of millions or nodes and 100's of millions of edges
                 \item Can read network data from local files, or from external sources
@@ -148,14 +148,14 @@
         \item Networks are collections of nodes and edges
         \item Nodes are static integers or strings, and edges are binary or continuous values
     \end{itemize}
-    NetworkX can represent \textbf{ANY} relationship supported by Python data types
+    \texttt{NetworkX} can represent \textbf{ANY} relationship supported by Python data types
     \vspace{2mm}
     \begin{columns}
         \column{.3\textwidth}
         \small{Suppose we had data, or a data generating process, that was a time-series
         \begin{itemize}
             \item Current tools need kludges or hacks to add this data
-            \item In NetworkX, we simply use the built-in Python \texttt{datetime} package to create a network of time-stamps
+            \item In \texttt{NetworkX}, we simply use the built-in Python \texttt{datetime} package to create a network of time-stamps
         \end{itemize}}
         \column{.7\textwidth}
         \begin{block}{\scriptsize{Simple time-series network}}
@@ -234,7 +234,7 @@ for i in xrange(num_nodes):
         \uncover<8->{All graphics are highly customizable and professional publication ready}
     \end{columns}
     \vspace{1mm}
-    \uncover<9->{\alert{NetworkX uses this entire suite to store, analyze and visualize networks}}
+    \uncover<9->{\alert{\texttt{NetworkX} uses this entire suite to store, analyze and visualize networks}}
 \end{frame}
 
 % subsection scipy_numpy_and_matplotlib (end)
@@ -243,15 +243,15 @@ for i in xrange(num_nodes):
 \label{sub:working_with_graphviz}
 
 \begin{frame}[fragile]
-    \frametitle{Exporting to GraphViz in NetworkX}
-    NetworkX is designed to be an open-source all-purpose network manipulation and analysis tool
+    \frametitle{Exporting to GraphViz in \texttt{NetworkX}}
+    \texttt{NetworkX} is designed to be an open-source all-purpose network manipulation and analysis tool
     \begin{itemize}
         \item Historically, the focus has not been on visualization
     \end{itemize}
-    While there are several options for visualization in NetworkX, perhaps the best is its ability to read and write \texttt{GraphViz} files
+    While there are several options for visualization in \texttt{NetworkX}, perhaps the best is its ability to read and write \texttt{GraphViz} files
     \begin{itemize}
         \item GraphViz is an open-source tool designed specifically for drawing graphs from the DOT language
-        \item NetworkX works directly with GV using the \texttt{pygraphviz} package
+        \item \texttt{NetworkX} works directly with GV using the \texttt{pygraphviz} package
     \end{itemize}
     \begin{columns}
         \column{.68\textwidth}
@@ -283,5 +283,40 @@ Average out degree:    3.0556
 % subsection working_with_graphviz (end)
 
 % section scientific_computing_in_python (end)
+
+\section{Data I/O from multiple sources} % (fold)
+\label{sec:data_i_o_from_multiple_sources}
+
+\subsection{Loading data from the Internet} % (fold)
+\label{sub:loading_data_from_the_internet}
+
+\begin{frame}[fragile]
+    \frametitle{Network data available on the Internet}
+    Recently, there has been an explosion of resources for scraping social graph
+    \begin{table}
+        \centering
+        \scriptsize{
+        \begin{tabular*}{.99\textwidth}{c|l|l}
+        Service & Data & API Docs \\ \hline \hline
+        \includegraphics[height=4mm]{../images/logos/twitter_logo.png} & Following(ers), @-replies, date/time/geo & \url{http://apiwiki.twitter.com/} \\ \hline
+        \includegraphics[height=4mm]{../images/logos/facebook_logo.jpg} & Friends, Wall Posts, date/time & \url{http://developers.facebook.com/docs/api} \\ \hline
+        \includegraphics[height=4mm]{../images/logos/Newgooglelogo.png} & All SocialGraph relationships & \url{http://code.google.com/apis/socialgraph/} \\ \hline
+        \includegraphics[height=4mm]{../images/logos/foursquare.png} & Friends, Check-ins & \url{http://foursquare.com/developers/} \\ \hline
+        \includegraphics[height=3mm]{../images/logos/Hunch_com_logo.png} & ``Taste graph", recommendations  & \url{http://hunch.com/developers/} \\ \hline
+        \includegraphics[height=4mm]{../images/logos/nytlogo.png} & Congressional votes, campaign finance & \url{http://developer.nytimes.com/docs}
+        \end{tabular*}}
+    \end{table}
+    \uncover<2->{There is clearly no shortage of data
+    \begin{itemize}
+        \item Each service provides different relational context
+        \item Data formats are generally JSON, Atom, XML, or some combination
+        \item Python has built-in parsers for all of these data types, which can easily be represented in \texttt{NetworkX}}
+    \end{itemize}}
+\end{frame}
+
+
+% subsection loading_data_from_the_internet (end)
+
+% section data_i_o_from_multiple_sources (end)
 
 \end{document}
