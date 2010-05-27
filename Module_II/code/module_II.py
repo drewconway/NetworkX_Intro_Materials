@@ -8,9 +8,12 @@ tutorial on NetworkX
 
 Module II - Why do SNA in NetworkX
 
-Created by Drew Conway on 2010-05-24.
-Copyright (c) 2010, under the General Purpose License (GPL) v3.
-For more information on GPLv3 see: http://www.gnu.org/licenses/gpl.html
+Author: Drew Conway 
+Email:  drew.conway@nyu.edu
+Date:   2010-05-24
+
+Copyright (c) 2010, under the Simplified BSD License.  
+For more information on FreeBSD see: http://www.opensource.org/licenses/bsd-license.php
 All rights reserved.
 """
 
