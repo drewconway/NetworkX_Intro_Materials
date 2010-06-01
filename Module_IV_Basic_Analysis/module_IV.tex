@@ -68,10 +68,10 @@
 	   \item Connecting to a database
 	   \item Building directly from the Internet
 	\end{itemize}
-	\uncover<2->{Brief review of Python \texttt{dict} data type
+	\uncover<2->{Brief review of Python dictionaries
 	\begin{itemize}
-	   \item Why it is so useful
-	   \item How \texttt{NetworkX} utilizes it
+	   \item Why is the \texttt{dict} so useful?
+	   \item How \texttt{NetworkX} utilizes it?
 	\end{itemize}}
 	\uncover<3->{Running basic centralities
 	\begin{itemize}
@@ -335,9 +335,153 @@ Average out degree:    1.0}}
     \includegraphics[scale=0.3]{../images/networks/big_wheel.png}
 \end{frame}
 
-
 % subsection building_directly_from_the_internet (end)
 
 % section loading_data_from_multiple_sources (end)
+
+\section{The Python \texttt{dict}} % (fold)
+\label{sec:the_python_dict}
+
+\subsection{Overview of the \texttt{dict} data type} % (fold)
+\label{sub:overview_of_the_dict}
+
+\begin{frame}[fragile]
+    \frametitle{Python Dictionaries}
+    \uncover<1->{The \texttt{dict} type is a data structure that represents a key$\rightarrow$value mapping}
+    \uncover<2->{\begin{block}{Working with the dict type}}
+        \begin{code}
+\uncover<2->{\alert<2>{\# Keys and values can be of any data type}}
+\uncover<2->{>>> fruit\_dict=\{"apple":1,"orange":[0.23,0.11],"banana":True \}} \newline
+\uncover<3->{\alert<3>{\# Can retrieve the keys and values as Python lists (vector)}
+>>> fruit\_dict.keys()
+["orange","apple","banana"]} \newline
+\uncover<4->{\alert<4>{\# Or create a (key,value) tuple}
+>>> fruit\_dict.items()
+[("orange",[0.23,0.11]),("apple",1),("Banana",True)]}
+\uncover<5->{\alert<5>{\# This becomes especially useful when you master Python ``list comprehension''}}
+            \end{code}
+        \end{block}
+\uncover<6->{The Python dictionary is an extremely flexible and useful data structure, making it one of the primary advantages of Python over other languages
+\begin{itemize}
+    \item This is particularly useful when performing analysis on networks, where node labels are natural keys
+\end{itemize}}
+\uncover<7->{\begin{center}
+    \alert{Now, try creating a \texttt{dict} of your own}
+\end{center}}
+\end{frame}
+
+% subsection overview_of_the_dict (end)
+
+\subsection{How NetowrkX uses the \texttt{dict}} % (fold)
+\label{sub:how_netowrkx_uses_the_dict}
+
+\begin{frame}[fragile]
+    \frametitle{Using dictionaries for network analysis}
+    \begin{columns}
+        \column{.45\textwidth}
+        From the documentation...\\ \vspace{3mm}
+        \only<1>{\includegraphics[width=5cm]{../images/figures/closeness_doc.png}}\only<2>{\includegraphics[width=5cm]{../images/figures/closeness_doc_2.png}}
+        \column{.55\textwidth}
+        \texttt{NetworkX}'s metric's make extensive use of the dict type
+        \begin{itemize}
+            \item In this case the key$\rightarrow$value mapping is of the form: \texttt{\{node\_label: metric\}} 
+        \end{itemize}
+        Let's look at an example:
+        \begin{block}{In-degree centrality of Hartford data}
+            \begin{code}
+\scriptsize{>>> in_cen=in_degree_centrality(hartford)
+>>> in_cen
+\{1: 0.014218009478672987, 2: 0.018957345971563982,...
+...
+90: 0.0047393364928909956, 293: 0.0\}}
+            \end{code}
+        \end{block}
+        We can see that node \#90 has in-degree centrality 0.0047
+        \begin{itemize}
+            \item But we can do so much more!
+        \end{itemize}
+    \end{columns}
+\end{frame}
+
+% subsection how_netowrkx_uses_the_dict (end)
+
+% section the_python_dict (end)
+
+\section{Running basic centralities} % (fold)
+\label{sec:running_basic_centralities}
+
+\subsection{Calculating centralities} % (fold)
+\label{sub:calculating_centralities}
+
+\begin{frame}[fragile]
+    \frametitle{Running multiple measures}
+    For our first analysis in NetworkX, we will do some basic network manipulation, then run multiple measures to find highest centrality nodes
+    \begin{itemize}
+        \item First, we will need to convert to an undirected network, and extract the main component
+    \end{itemize}
+    \begin{block}{Find main component \& symmetrize}
+        \begin{code}
+# Many of the centrality metrics require undirected graphs, so we will symmetrize
+>>> \alert<2>{hartford_ud=hartford.to_undirected()}
+# The network also has many small components, but for
+# this analysis we are interested in the largest
+>>> \alert<3>{hartford_mc=hartford_main=connected_component_subgraphs(hartford_ud)[0]}
+        \end{code}
+    \end{block}
+    Next, we will calculate multiple measures
+    \begin{block}{Computing multiple centralities}
+        \begin{code}
+# Betweenness centrality
+>>> \alert<4>{bet_cen=betweenness_centrality(hartford_mc)}
+# Closeness centrality
+>>> \alert<4>{clo_cen=closeness_centrality(hartford_mc)}
+# Eigenvector centrality
+>>> \alert<4>{eig_cen=eigenvector_centrality(hartford_mc)}
+        \end{code}
+    \end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Finding most central actors}
+    To find the most central actors we will use Python's list comprehension technique to do basic data manipulation on our centrality dictionaries
+    \begin{columns}
+        \column{.6\textwidth}
+            \begin{block}{Function for finding most central actor}
+        \begin{code}
+def highest_centrality(cent_dict):
+    """Returns node key with largest value from
+    NX centrality dict"""
+    \alert<2>{# Create ordered tuple of centrality data
+    cent_items=cent_dict.items()}
+    \alert<3>{# List comprehension!
+    cent_items=[(b,a) for (a,b) in cent_items]}
+    \alert<4>{# Sort in descending order
+    cent_items.sort()
+    cent_items.reverse()
+    return cent_items[0][1]}
+        \end{code}
+            \end{block}
+            \column{.4\textwidth}
+            \uncover<3->{List comprehension
+            \begin{itemize}
+                \scriptsize{\item Given a dict: \texttt{d=\{1: 0.15, 2: 0.67\}}}
+                \scriptsize{\item \texttt{d.items()} $\rightarrow$ \texttt{[(1,0.15),(2,0.67)]}}
+                \scriptsize{\item \texttt{d=[(b,a) for (a,b in d)]} $\rightarrow$ \texttt{[(0.15,1),(0.67,2)]}}
+            \end{itemize}}}
+            \uncover<4->{Here, we use list comprehension in order to use Python's built-in \texttt{sort} and \texttt{reverse} list functions}
+    \end{columns}
+    \vspace{2mm}Now, just ask for the answer
+    \begin{block}{Finding Most central actors}
+        \begin{code}
+\scriptsize{>>>  print("Actor "+str(highest_centrality(bet_cen))+" has the highest Betweenness centrality")
+\alert<5->{Actor 82 has the highest Betweenness centrality}}
+        \end{code}
+    \end{block}
+\end{frame}
+
+
+% subsection calculating_centralities (end)
+
+% section running_basic_centralities (end)
 
 \end{document}

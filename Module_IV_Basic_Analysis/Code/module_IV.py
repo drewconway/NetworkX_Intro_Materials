@@ -26,9 +26,9 @@ from time import *
 from scipy import array,unique
 
 def snowball_round(G,seeds,myspace=False):
-"""Function takes a base graph, and a list of seeds
-and builds out the network data by accessing the
-Google SocialGraph API."""
+    """Function takes a base graph, and a list of seeds
+    and builds out the network data by accessing the
+    Google SocialGraph API."""
     t0=time()
     if myspace:
         seeds=get_myspace_url(seeds)
@@ -77,7 +77,7 @@ Google SocialGraph API."""
     return sb_net,sb_data
         
 def get_myspace_url(seeds):
-"""Special function for parsing myspace.com users"""
+    """Special function for parsing myspace.com users"""
     uids=[]
     for s in seeds:
         b=s.split('=')
@@ -86,8 +86,8 @@ def get_myspace_url(seeds):
     return uids
 
 def create_egonet(s):
-"""Base function for creating an ego network from some 
-SocialGraph URL"""
+    """Base function for creating an ego network from some 
+    SocialGraph URL"""
     try:
         raw=decode(s)
         G=DiGraph()
@@ -128,7 +128,7 @@ SocialGraph URL"""
         return G,pendants
 
 def get_sg(seed_url):
-"""Create Internet socket for some seed URL"""
+    """Create Internet socket for some seed URL"""
     sgapi_url="http://socialgraph.apis.google.com/lookup?q="+seed_url+"&edo=1&edi=1&fme=1&pretty=0"
     try:
         furl=urlopen(sgapi_url)
@@ -139,21 +139,33 @@ def get_sg(seed_url):
         print "Could not connect to website"
         print sgapi_url
         return {}
-
+        
+        
+def highest_centrality(cent_dict):
+    """Returns node key with largest value from
+    NX centrality dict"""
+    # Create ordered tuple of centrality data
+    cent_items=cent_dict.items()    
+    # List comprehension!
+    cent_items=[(b,a) for (a,b) in cent_items]
+    # Sort in descending order
+    cent_items.sort()
+    cent_items.reverse()
+    return cent_items[0][1]
 
 
 def main():
-	# 1.0 Loading a local data file
-	# Load the Hartford drug users data, a directed binary graph.
-	# We will specify that the graph be generated as a directed graph, and
-	# that the nodes are integers (rather than strings)
-	hartford=read_edgelist("../../data/hartford_drug.txt",create_using=DiGraph(),nodetype=int)
-	info(hartford)  # Check the the data has been loaded properly
-	
-	# 2.0 Connecting to a database
-	
-	# 3.0 Building a network directly from the Internet
-    seed="imichaeldotorg"   # Set the seed user within livejournal.com
+    # 1.0 Loading a local data file
+    # Load the Hartford drug users data, a directed binary graph.
+    # We will specify that the graph be generated as a directed graph, and
+    # that the nodes are integers (rather than strings)
+    hartford=read_edgelist("../../data/hartford_drug.txt",create_using=DiGraph(),nodetype=int)
+    info(hartford)  # Check the the data has been loaded properly
+
+    # 2.0 Connecting to a database
+
+    # 3.0 Building a network directly from the Internet
+    '''seed="imichaeldotorg"   # Set the seed user within livejournal.com
     seed_url="http://"+seed+".livejournal.com"
     # 3.1 Scrape, parse and build seed's ego net
     sg=get_sg(seed_url)
@@ -164,7 +176,23 @@ def main():
     k=2
     for g in range(k):
         net,newnodes=snowball_round(net,newnodes)
-        write_pajek(net,seed+"_step_"+str(g+1)+".net")
+        write_pajek(net,seed+"_step_"+str(g+1)+".net")'''
+    
+    # 4.0 Calculate in-degree centrality for Hartford data
+    in_cent=in_degree_centrality(hartford)
+    
+    # 5.0 Calculating multiple measures, and finding
+    # most central actors
+    hartford_ud=hartford.to_undirected()
+    hartford_mc=connected_component_subgraphs(hartford_ud)[0]    # First, extract MC
+    # 5.1 Calculate multiple measures on MC
+    bet_cen=betweenness_centrality(hartford_mc)
+    clo_cen=closeness_centrality(hartford_mc)
+    eig_cen=eigenvector_centrality(hartford_mc)
+    # 5.2 Find the actors with the highest centrality for each measure,
+    print("Actor "+str(highest_centrality(bet_cen))+" has the highest Betweenness centrality")
+    print("Actor "+str(highest_centrality(clo_cen))+" has the highest Closeness centrality")
+    print("Actor "+str(highest_centrality(eig_cen))+" has the highest Eigenvector centrality")
     
 if __name__ == '__main__':
 	main()
