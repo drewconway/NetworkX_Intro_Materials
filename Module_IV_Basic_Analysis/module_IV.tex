@@ -49,7 +49,7 @@
 \newcommand{\E}{\mathsf{E}}
 \newcommand{\bb}{\mathbf}
 
-\title{Module II - Basic Analysis}
+\title{Module IV - Basic Analysis}
 \author{Drew Conway --- Department of Politics}
 \institute{\includegraphics[width = 4cm]{../images/logos/500px-NYU_logo.png}}
 \date{June 29, 2010}
@@ -155,11 +155,188 @@ Average out degree:    1.5896}
 
 \begin{frame}[fragile]
     \frametitle{Building a network from a database}
-    
+    As data sets become larger and persistently changing, it may make more sense to store them in a database rather than a single file
+    \begin{itemize}
+        \item As we have seen, Python provides binding to many modern database frameworks
+    \end{itemize}
 \end{frame}
 
 
 % subsection connecting_to_a_database (end)
+
+\subsection{Building directly from the Internet} % (fold)
+\label{sub:building_directly_from_the_internet}
+
+\begin{frame}[fragile]
+    \frametitle{Building the social network among LiveJournal users}
+    \begin{columns}
+        \column{.5\textwidth}
+            \includegraphics[scale=0.38]{../images/logos/find-a-friend.png}
+        \column{.5\textwidth}
+       Perhaps the most powerful aspect of NetworkX is its ability to work in Python to generate networks from live-streaming data
+        \begin{itemize}
+            \uncover<2->{\item In Python, use \texttt{NetworkX}, \texttt{cjson} and a other standard scientific libraries to parse Google's SocialGraph data }
+            \uncover<3->{\item Using a ``seed'' user, we will build out a network}
+            \uncover<4->{\item Through a process called ``k-snowball searching'' $seed\rightarrow friend\rightarrow\dots\rightarrow friend_{k}$}
+            \uncover<5->{\begin{itemize}
+                \scriptsize{\item Seed: \href{http://imichaeldotorg.livejournal.com/}{imichaeldotorg.livejournal.com}
+                \item $k = 3$}
+            \end{itemize}}
+            \uncover<6->{\item \alert{Note the low value of $k$}}
+        \end{itemize}
+    \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{The code, part 1}
+    \begin{columns}
+        \column{.5\textwidth}
+        \begin{block}{\scriptsize{Loading the libraries and setting things up}}
+            \begin{code}
+\tiny{from cjson import *
+from urllib import *
+from networkx import *
+from time import *
+from scipy import array,unique
+...
+if __name__ == "__main__":
+    seed_url=``http://imichaeldotorg.livejournal.com"
+    sg=get_sg(seed_url)
+    net,newnodes=create_egonet(sg)
+    info(net)}
+                \end{code}
+            \end{block}}
+        \column{.5\textwidth}
+\begin{code}
+\uncover<2->{\tiny{Name:                  [`http://imichaeldotorg.livejournal.com/']
+Type:                  DiGraph
+Number of nodes:       5
+Number of edges:       5
+Average in degree:     1.0
+Average out degree:    1.0}}
+\end{code}
+    \end{columns}
+    \begin{block}{\scriptsize{Get the JSON from SocialGraph}}
+        \begin{code}
+    \tiny{def get_sg(seed_url):
+        sgapi_url="http://socialgraph.apis.google.com/lookup?q="+seed_url+"&edo=1&edi=1&fme=1&pretty=0"
+        try:
+            furl=urlopen(sgapi_url)
+            fr=furl.read()
+            furl.close()
+            return fr
+        except IOError:
+            print "Could not connect to website"
+            print sgapi_url
+            return {}}
+        \end{code}
+    \end{block}    
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Build egonet and snowball}
+    \begin{columns}
+        \column{0.4\textwidth}
+        \begin{block}{\scriptsize{Creating the egonet}}
+            \begin{code}
+\tiny{def create_egonet(s):
+    try:
+        raw=decode(s)
+        G=DiGraph()
+        pendants=[]
+        n=raw['nodes']
+        nk=n.keys()
+        G.name=str(nk)
+        pendants=[]
+        for a in range(0,len(nk)):
+            for b in range(0,len(nk)):
+                if a!=b:
+                    G.add_edge(nk[a],nk[b])
+        for k in nk:
+            ego=n[k]
+            ego_out=ego['nodes_referenced']
+            for o in ego_out:
+                G.add_edge(k,o)
+                pendants.append(o)
+            ego_in=ego['nodes_referenced_by']
+            for i in ego_in:
+                G.add_edge(i,k)
+                pendants.append(i)
+        pendants=array(pendants,dtype=str)
+        pendants.flatten()
+        pendants=unique(pendants)
+        return G,pendants
+    except DecodeError:
+    ...
+    except KeyError:}
+            \end{code}
+        \end{block}
+        \column{0.6\textwidth}
+        \begin{block}{\scriptsize{Rolling the snowball}}
+            \begin{code}
+\tiny{def snowball_round(G,seeds,myspace=False):
+    t0=time()
+    if myspace:
+        seeds=get_myspace_url(seeds)
+    sb_data=[]
+    for s in range(0,len(seeds)):
+        s_sg=get_sg(seeds[s])
+        new_ego,pen=create_egonet(s_sg)
+        for p in pen:
+                sb_data.append(p)
+        if s<1:
+            sb_net=compose(G,new_ego)
+        else:
+            sb_net=compose(new_ego,sb_net)
+        del new_ego
+        if s==round(len(seeds)*0.2):
+            sb_net.name='20% complete'
+            sb_net.info()
+            print 'AT: '+strftime('%m/%d/%Y, %H:%M:%S', gmtime())
+            print ''
+    ...
+    # More time keeping, probably a MUCH better way to do this
+    sb_data=array(sb_data)
+    sb_data.flatten()
+    sb_data=unique(sb_data)
+    sb_net.info()
+    return sb_net,sb_data}
+            \end{code}
+        \end{block}
+    \vspace{5mm}
+    \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Build the whole network}
+    \begin{columns}
+        \column{0.5\textwidth}
+         \scriptsize{\begin{tabular}{l|l|l|l|l}
+         Step & Nodes & Edges & Mean Degree & Density \\ \hline \hline
+         \color<2>{red}{Seed} & \color<2>{red}{5} & \color<2>{red}{5} & \color<2>{red}{2.0} & \color<2>{red}{0.25} \\ \hline
+         \color<3>{red}{$k=2$} & \color<3>{red}{75} & \color<3>{red}{115} & \color<3>{red}{3.0} & \color<3>{red}{0.02} \\ \hline
+         \color<4>{red}{$k=3$} & \color<4>{red}{4,938} & \color<4>{red}{8,659} & \color<4>{red}{3.5} & \color<4>{red}{$3.6(10^{-4})$}
+         \end{tabular}}
+         \column{0.5\textwidth}
+         \begin{itemize}
+            \item \uncover<2->{\scriptsize{Our seed is abnormally isolated, with only four neighbors}}
+            \item \uncover<3->{\scriptsize{Large jump after first snowball}}
+            \item \uncover<4->{\scriptsize{Massive structural leap at $k=3$}}
+         \end{itemize}
+    \end{columns}
+    \begin{center}
+        \uncover<3->{\includegraphics[scale=0.3]{../images/networks/goog_api_k2.png}}
+    \end{center}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{The full network}
+    To get a feeling for the size of the full network...
+    \includegraphics[scale=0.3]{../images/networks/big_wheel.png}
+\end{frame}
+
+
+% subsection building_directly_from_the_internet (end)
 
 % section loading_data_from_multiple_sources (end)
 
