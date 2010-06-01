@@ -1,0 +1,166 @@
+%
+%  module_IV.tex
+%
+%  Created by Drew Conway on 2010-06-01.
+% 
+%
+\documentclass[xcolor=dvipsnames, 9pt]{beamer}
+
+\newenvironment{code}{\begin{semiverbatim} \begin{footnotesize}}
+{\end{footnotesize}\end{semiverbatim}}
+
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{natbib}
+\usepackage{color}
+\usepackage{pdfsync}
+\usepackage{chancery}
+\usepackage{movie15}
+\usepackage{pgfpages}
+\usepackage{fancyvrb}
+\usepackage{colortbl}
+
+% \definecolor{white}{rgb}{255,255,255}
+% \definecolor{darkred}{rgb}{0.5,0,0}
+% \definecolor{darkgreen}{rgb}{0,0.5,0}
+% \definecolor{lightblue}{rgb}{0,0,0.7}
+
+% \hypersetup{colorlinks,
+%   linkcolor=white,
+%   filecolor=darkred,
+%   urlcolor=lightblue,
+%   citecolor=darkblue}
+
+\usepackage{beamerthemesplit}
+\usetheme{Copenhagen}
+\usecolortheme[named=Violet]{structure} 
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{itemize items}[triangle]
+\setbeamertemplate{enumerate items}[default]
+%\setbeameroption{show notes on second screen}
+%\logo{\includegraphics[width = 2cm]{nyulogo.png}}
+
+\newcommand{\R}{\mathbb{R}}
+\renewcommand{\d}{\mathsf{d}}
+\newcommand{\dd}{\partial}
+\newcommand{\E}{\mathsf{E}}
+\newcommand{\bb}{\mathbf}
+
+\title{Module II - Basic Analysis}
+\author{Drew Conway --- Department of Politics}
+\institute{\includegraphics[width = 4cm]{../images/logos/500px-NYU_logo.png}}
+\date{June 29, 2010}
+
+\begin{document} 
+
+\begin{frame}[plain]
+  \titlepage  
+\end{frame}
+
+\begin{frame}
+	\frametitle{Agenda for Module IV}
+	Loading data from multiple sources
+	\begin{itemize}
+	   \item Local network data files
+	   \item Connecting to a database
+	   \item Building directly from the Internet
+	\end{itemize}
+	\uncover<2->{Brief review of Python \texttt{dict} data type
+	\begin{itemize}
+	   \item Why it is so useful
+	   \item How \texttt{NetworkX} utilizes it
+	\end{itemize}}
+	\uncover<3->{Running basic centralities
+	\begin{itemize}
+	   \item Degree, Closeness, Betweeness Eigenvector
+	   \item Calculating degree distribution
+	   \item Plotting statistics using \texttt{matplotlib}
+	   \item Calculating cliques, clustering and transitivity
+	\end{itemize}}
+	\uncover<4->{Outputting data into multiple formats
+	\begin{itemize}
+	   \item Writing network data
+	   \item Saving network analysis statistics
+	\end{itemize}}
+	\uncover<5->{Basic visualization
+	\begin{itemize}
+	   \item Review of \texttt{NetworkX}'s plotting algorithms
+	   \item Adding analysis to visualization 
+	\end{itemize}}
+\end{frame}
+
+\section{Loading data from multiple sources} % (fold)
+\label{sec:loading_data_from_multiple_sources}
+
+\subsection{Local network data} % (fold)
+\label{sub:local_network_data}
+
+\begin{frame}[fragile]
+    \frametitle{Loading a network file}
+    As we have seen, one of the main advantages of working with \texttt{NetworkX} is that it can read many different network formats
+    \begin{itemize}
+        \item For those that are unfamiliar with working at the \textbf{command-line}, however, the process can be confusing
+    \end{itemize}
+    \begin{block}{NX syntax for loading a file}
+        \begin{tabular}{cccc}
+        \alert<2>{$>>> G$} & = & \alert<3>{read\_format(``path/to/file.txt''}, & \alert<4>{\emph{...options...}}) \\
+        \alert<2>{\uparrow} & & \alert<3>{\uparrow} & \alert<4>{\uparrow} \\
+        \alert<2>{\scriptsize{Net variable}} & & \alert<3>{\scriptsize{NX function, file directory path}} & \alert<4>{\scriptsize{Graph type, nodes type, etc.}}
+        \end{tabular}
+    \end{block}
+    \uncover<5->{Let's try!
+    \begin{itemize}
+        \item We will load the edge list of Hartford drug users network
+        \item Specify that the network be a directed graph, and the nodes be integers
+        \item Use \texttt{info()} to check that data has been loaded correctly
+    \end{itemize}}
+    \begin{center}
+        \uncover<6->{\alert<6>{It's time to fire up your console and load Python!}}
+    \end{center}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Loading the Hartford drug users network}
+    \begin{block}{Starting \texttt{NetworkX} and loading data}
+        \begin{code}
+\scriptsize{>>> from networkx import *
+>>> hartford=\alert<3>{read_edgelist}("\alert<4>{../../data/hartford_drug.txt}",\alert<5>{create_using=DiGraph()},\alert<6>{nodetype=int})
+>>> \alert<7>{info(hartford)}
+Name:                  
+Type:                  DiGraph
+Number of nodes:       212
+Number of edges:       337
+Average in degree:     1.5896
+Average out degree:    1.5896}
+        \end{code}
+    \end{block}
+\uncover<2->{What did we just do?}
+\begin{itemize}
+    \item \uncover<3->{Used the \texttt{read\_edgelist} function to load EL file}
+    \item \uncover<4->{Specified path to Hartford drug users file}
+    \item \uncover<5->{Used the \texttt{create\_using} option to force NX to create as a directed graph}
+    \item \uncover<6->{Used the \texttt{nodetype} option to force NX to store nodes as integers}
+    \item \uncover<7->{Used the \texttt{info} function to check that it all worked}
+\end{itemize}
+\uncover<8->{Some formats may have more or less options, \textbf{always check the documentations!}}
+\end{frame}
+
+% subsection local_network_data (end)
+
+\subsection{Connecting to a database} % (fold)
+\label{sub:connecting_to_a_database}
+
+\begin{frame}[fragile]
+    \frametitle{Building a network from a database}
+    
+\end{frame}
+
+
+% subsection connecting_to_a_database (end)
+
+% section loading_data_from_multiple_sources (end)
+
+\end{document}
