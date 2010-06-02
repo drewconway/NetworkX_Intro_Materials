@@ -24,6 +24,8 @@ from cjson import *
 from urllib import *
 from time import *
 from scipy import array,unique
+import pylab as P
+from numpy import polyfit
 
 def snowball_round(G,seeds,myspace=False):
     """Function takes a base graph, and a list of seeds
@@ -152,6 +154,57 @@ def highest_centrality(cent_dict):
     cent_items.sort()
     cent_items.reverse()
     return cent_items[0][1]
+    
+def centrality_scatter(met_dict1,met_dict2,path="",ylab="",xlab="",title="",reg=False):
+    """Generates a scatter plot of two network centrality metrics.
+    Actor ID's are used as points, and options axis labels and 
+    title can be provided.
+    
+    ### Parameters ###
+    met_dict1:  x-axis data
+    met_dict2:  y-axis data
+    path:       path to save figure
+    
+    ylab:       y-axis label
+    xlab:       x-axis label
+    title:      plot title
+    reg:        boolean to add a best fit line
+    """
+    fig=P.figure(figsize=(7,7))
+    ax1=fig.add_subplot(111)
+    ax2=ax1.twinx()
+    # Create items so actors can be sorted properly
+    met_items1=met_dict1.items()
+    met_items2=met_dict2.items()
+    met_items1.sort()
+    met_items2.sort()
+    # Grab data
+    xdata=[(b) for (a,b) in met_items1]
+    ydata=[(b) for (a,b) in met_items2]
+    # If adding a best fit line, we will use NumPy to calculate
+    # the points.
+    if reg:
+        # Function returns y-intercept and slope
+        # So, we create a function to draw LOBF
+        # from this data
+        yint,slope=polyfit(xdata,ydata,1)
+        xline=P.xticks()[0]
+        yline=map(lambda x: slope*x+yint,xline)
+        # Add line
+        ax1.plot(xline,yline,ls='--',color='r')
+    # Add each actor to the plot by ID
+    for p in xrange(len(met_items1)):
+        ax2.text(x=xdata[p],y=ydata[p],s=str(met_items1[p][0]))
+    # Set new x- and y-axis limits to data
+    P.xlim((0.0,max(xdata)+(.15*max(xdata))))   # Give a little buffer
+    P.ylim((0.0,max(ydata)+(.15*max(ydata))))
+    # Add labels
+    ax1.set_title(title)
+    ax1.set_xlabel(xlab)
+    ax1.set_ylabel(ylab)
+    # Save figure
+    P.draw()
+    P.savefig(path,dpi=100)
 
 
 def main():
@@ -193,6 +246,9 @@ def main():
     print("Actor "+str(highest_centrality(bet_cen))+" has the highest Betweenness centrality")
     print("Actor "+str(highest_centrality(clo_cen))+" has the highest Closeness centrality")
     print("Actor "+str(highest_centrality(eig_cen))+" has the highest Eigenvector centrality")
+    
+    #6.0 Plot Eigenvector centrality vs. betweeness in matplotlib
+    centrality_scatter(bet_cen,eig_cen,"../../images/figures/drug_scatter.png",ylab="Eigenvector Centrality",xlab="Betweenness Centrality",title="Hartford Drug Network Key Actor Analysis",reg=True)
     
 if __name__ == '__main__':
 	main()
