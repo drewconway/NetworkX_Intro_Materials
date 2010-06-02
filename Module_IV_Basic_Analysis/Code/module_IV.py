@@ -182,8 +182,8 @@ def centrality_scatter(met_dict1,met_dict2,path="",ylab="",xlab="",title="",reg=
     ydata=[(b) for (a,b) in met_items2]
     # Add each actor to the plot by ID
     for p in xrange(len(met_items1)):
-        ax1.text(x=xdata[p],y=ydata[p],s=str(met_items1[p][0]),color="darkblue")
-        # If adding a best fit line, we will use NumPy to calculate the points.
+        ax1.text(x=xdata[p],y=ydata[p],s=str(met_items1[p][0]),color="indigo")
+    # If adding a best fit line, we will use NumPy to calculate the points.
     if reg:
         # Function returns y-intercept and slope.  So, we create a function to 
         # draw LOBF from this data
@@ -191,7 +191,7 @@ def centrality_scatter(met_dict1,met_dict2,path="",ylab="",xlab="",title="",reg=
         xline=P.xticks()[0]
         yline=map(lambda x: slope*x+yint,xline)
         # Add line
-        ax1.plot(xline,yline,ls='--',color='r')
+        ax1.plot(xline,yline,ls='--',color='grey')
     # Set new x- and y-axis limits to data
     P.xlim((0.0,max(xdata)+(.15*max(xdata))))   # Give a little buffer
     P.ylim((0.0,max(ydata)+(.15*max(ydata))))
@@ -200,7 +200,6 @@ def centrality_scatter(met_dict1,met_dict2,path="",ylab="",xlab="",title="",reg=
     ax1.set_xlabel(xlab)
     ax1.set_ylabel(ylab)
     # Save figure
-    P.draw()
     P.savefig(path,dpi=100)
 
 
