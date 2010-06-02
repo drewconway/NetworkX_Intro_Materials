@@ -481,8 +481,8 @@ def highest_centrality(cent_dict):
 
 % subsection calculating_centralities (end)
 
-\subsection{Visualizing the analysis with \texttt{matplotlib}} % (fold)
-\label{sub:visualizing_the_analysis_with_matplotlib}
+\subsection{Visualizing analysis with \texttt{matplotlib}} % (fold)
+\label{sub:visualizing_analysis_with_matplotlib}
 
 \begin{frame}[fragile]
     \frametitle{Introduction to \texttt{matplotlib}}
@@ -490,10 +490,84 @@ def highest_centrality(cent_dict):
     \begin{itemize}
         \item While \texttt{NumPy} and \texttt{SciPy} do most of the behind the scenes work, you will interact with \texttt{matplotlib} frequently for when doing network analysis
     \end{itemize}
+    \begin{columns}
+        \column{.55\textwidth}
+            \uncover<2->{\includegraphics[width=6.2cm]{../images/figures/drug_scatter.png}}
+        \column{.45\textwidth}
+        \uncover<3->{We will need to create a function that takes two centrality \texttt{dict} and generates this plot}
+        \begin{enumerate}
+            \uncover<4->{\item Create a \texttt{matplotlib} figure}
+            \uncover<5->{\item Plot each node label as a point}
+            \uncover<6->{\item Add a ``best fit'' line}
+            \uncover<7->{\item Add axis and title labels}
+            \uncover<8->{\item Save figure as a PNG file}
+        \end{enumerate}
+    \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Creating a key actor plot in \texttt{matplotlib}}
+        \begin{block}{The \texttt{centrality\_scatter} function, part one}
+            \begin{code}
+\scriptsize{def centrality_scatter(met_dict1,met_dict2,path="",ylab="",xlab="",title="",reg=False):
+    \alert<2>{# Create figure and drawing axis
+    fig=P.figure(figsize=(7,7))
+    ax1=fig.add_subplot(111)}
+    \alert<3>{# Create items so actors can be sorted properly
+    met_items1=met_dict1.items()
+    met_items2=met_dict2.items()
+    met_items1.sort()
+    met_items2.sort()
+    # Grab data
+    xdata=[(b) for (a,b) in met_items1]
+    ydata=[(b) for (a,b) in met_items2]}
+    \alert<4>{# Add each actor to the plot by ID
+    for p in xrange(len(met_items1)):
+        ax1.text(x=xdata[p],y=ydata[p],s=str(met_items1[p][0]),color="indigo")}}
+            \end{code}
+        \end{block}
+    \begin{itemize}
+        \uncover<2->{\item Create a canvas to draw on}
+        \uncover<3->{\item manipulate and store centrality data}
+        \uncover<4->{\item Add points to plot as node labels}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Creating a key actor plot in \texttt{matplotlib}}
+    \begin{block}{The \texttt{centrality\_scatter} function, part one}
+        \begin{code}
+\scriptsize{def centrality_scatter(met_dict1,met_dict2,path="",ylab="",xlab="",title="",reg=False):
+...
+    \alert<2>{# If adding a best fit line, we will use NumPy to calculate the points.
+    if reg:
+        # Function returns y-intercept and slope.  So, we create a function to 
+        # draw LOBF from this data
+        slope,yint=polyfit(xdata,ydata,1)
+        xline=P.xticks()[0]
+        yline=map(lambda x: slope*x+yint,xline)
+        # Add line
+        ax1.plot(xline,yline,ls='--',color='grey')}
+    \alert<3>{# Set new x- and y-axis limits to data
+    P.xlim((0.0,max(xdata)+(.15*max(xdata))))   # Give a little buffer
+    P.ylim((0.0,max(ydata)+(.15*max(ydata))))}
+    \alert<4>{# Add labels
+    ax1.set_title(title)
+    ax1.set_xlabel(xlab)
+    ax1.set_ylabel(ylab)
+    # Save figure
+    P.savefig(path,dpi=100)}}
+        \end{code}
+    \end{block}
+    \begin{itemize}
+        \uncover<2->{\item Add a best fit line}
+        \uncover<3->{\item Resize figure to fit data}
+        \uncover<4->{\item Add labels, and save the figure as a PNG file}
+    \end{itemize}
 \end{frame}
 
 
-% subsection visualizing_the_analysis_with_matplotlib (end)
+% subsection visualizing_analysis_with_matplotlib (end)
 
 % section running_basic_centralities (end)
 
