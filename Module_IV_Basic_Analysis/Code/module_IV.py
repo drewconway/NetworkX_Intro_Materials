@@ -26,6 +26,7 @@ from time import *
 from scipy import array,unique
 import pylab as P
 from numpy import polyfit
+import csv
 
 def snowball_round(G,seeds,myspace=False):
     """Function takes a base graph, and a list of seeds
@@ -201,7 +202,39 @@ def centrality_scatter(met_dict1,met_dict2,path="",ylab="",xlab="",title="",reg=
     ax1.set_ylabel(ylab)
     # Save figure
     P.savefig(path,dpi=100)
-
+    
+def add_metric(G,met_dict):
+    """Adds metric data to G from a dictionary keyed by node labels
+    
+    ### Parameters ###
+    
+    G:          NetworkX graph object
+    met_dict:   Dictionary of metric keyed by node labels
+    """
+    if(G.nodes().sort()==met_dict.keys().sort()):
+        for i in met_dict.keys():
+            G.add_node(i,metric=met_dict[i])
+        return G
+    else:
+        raise ValueError("Node labels do no match")
+    
+def csv_exporter(data_dict,path):
+    """Takes a dict of centralities keyed by column headers and exports 
+    data as a CSV file"""
+    # Create column heaer list
+    col_headers=["Actor"]
+    col_headers.extend(data_dict.keys())
+    # Create CSV writer and write column headers
+    writer=csv.DictWriter(open(path,"w"),fieldnames=col_headers)
+    writer.writerow(dict((h,h) for h in col_headers))
+    # Write each row of data
+    for j in data_dict[col_headers[1]].keys():
+        # Create a new dict for each row
+        row=dict.fromkeys(col_headers)
+        row["Actor"]=j
+        for k in data_dict.keys():
+            row[k]=data_dict[k][j]
+        writer.writerow(row)
 
 def main():
     # 1.0 Loading a local data file
@@ -214,6 +247,7 @@ def main():
     # 2.0 Connecting to a database
 
     # 3.0 Building a network directly from the Internet
+    # WARNING: This can take a long time to run!
     '''seed="imichaeldotorg"   # Set the seed user within livejournal.com
     seed_url="http://"+seed+".livejournal.com"
     # 3.1 Scrape, parse and build seed's ego net
@@ -245,6 +279,21 @@ def main():
     
     #6.0 Plot Eigenvector centrality vs. betweeness in matplotlib
     centrality_scatter(bet_cen,eig_cen,"../../images/figures/drug_scatter.png",ylab="Eigenvector Centrality",xlab="Betweenness Centrality",title="Hartford Drug Network Key Actor Analysis",reg=True)
+    
+    # 7.0 Outputting network data
+    # First, output the data as an adjaceny list
+    write_adjlist(hartford_mc,"../../data/hartford_mc_adj.txt")
+    # 7.1 Add metric data to the network object
+    hartford_mc_met=add_metric(hartford_mc,eig_cen)
+    print(hartford_mc_met.nodes(data=True)[1:10])   # Check the the data was stored
+    # 7.2 output data using the Pajak format to save the node attribute data
+    write_pajek(hartford_mc,"../../data/hartford_mc_metric.net")    # NX will automatically add all attibute data to output
+    
+    # 8.0 Exporting data to a CSV file
+    csv_data={"Betweeness":bet_cen,"Closeness":clo_cen,"Eigenvector":eig_cen}
+    # 8.1 After we have all the data in a single dict, we send it to out function
+    # to export the data as a CSV
+    csv_exporter(csv_data,"../../data/drug_data.csv")
     
 if __name__ == '__main__':
 	main()
