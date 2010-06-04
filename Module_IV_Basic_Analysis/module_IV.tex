@@ -481,6 +481,59 @@ def highest_centrality(cent_dict):
 
 % subsection calculating_centralities (end)
 
+\subsection{Calculating basic community structure} % (fold)
+\label{sub:calculating_basic_community_structure}
+
+\begin{frame}[fragile]
+    \frametitle{Calculating basic community structure}
+    Often in network analysis we are interested in estimating the cohesiveness of a network, or the communities that exists within the structure
+    \vspace{3mm}
+    
+    \textbf{Cliques}
+    \begin{itemize}
+        \item Maximal cliques are the largest complete subgraph containing a given point.  There are several algorithms for finding cliques, including Bron & Kerbosch (1973), Tomita, Tanaka and Takahashi (2006), Cazals and Karande (2008)
+    \end{itemize}
+    \textbf{Clustering}
+    \begin{itemize}
+        \item For each node find the fraction of possible triangles that exist,$c_{v}=\frac{2T(v)}{deg(v)(deg(v)-1)}$, where $T(v)$ is the number of triangles through node $v$.
+    \end{itemize}
+    \textbf{Transitivity}
+    \begin{itemize}
+        \item The fraction of all possible triangles which are in fact triangles. Or, $Trans=3\left(\frac{T}{t}\right)$, where $T=$ \# of possible triangles and $t=$ \# of actual triads
+    \end{itemize}
+    We will use clustering coefficients to identify community structure in the Hartford drug network
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Toy community detection example (not a good one)}
+    \begin{block}{Calculating clustering coefficients}
+        \begin{code}
+\scriptsize{\alert<2>{# Calculate clustering coefficients of each node (return as dict)
+clus=clustering(hartford_mc,with_labels=True)}
+\alert<3>{# Get counts of nodes membership for each clustering coefficient, and clean up
+unique_clus=list(unique(clus.values()))
+clus_counts=zip(map(lambda c: clus.values().count(c),unique_clus),unique_clus)
+clus_counts.sort()
+clus_counts.reverse()}
+\alert<4>{# Create a subgraph from nodes with most frequent clustering coefficient
+mode_clus_sg=subgraph(hartford_mc,[(a) for (a,b) in clus.items() if b==clus_counts[0][1]])}}         
+        \end{code}
+    \end{block}
+    \begin{columns}
+        \column{.5\textwidth}
+        \begin{itemize}
+            \uncover<2->{\item Use the \texttt{with\_labels} to return a \texttt{dict} keyed by node label}
+            \uncover<3->{\item The \texttt{zip} function takes two \texttt{lists} and returns a \texttt{tuple}}
+            \uncover<4->{\item More complex list comprehension with logic operator}
+        \end{itemize}
+        \column{.5\textwidth}
+            \uncover<5->{\includegraphics[width=5.2cm,clip,trim=1cm 1cm 1cm 1cm]{../images/networks/mode_clus_sg.png}}
+    \end{columns}
+\end{frame}
+
+
+% subsection calculating_basic_community_structure (end)
+
 \subsection{Visualizing analysis with \texttt{matplotlib}} % (fold)
 \label{sub:visualizing_analysis_with_matplotlib}
 
@@ -691,15 +744,20 @@ def csv_exporter(\alert<3>{data_dict,path}):
     \end{columns}
 \end{frame}
 
-\section{Basic visualization} % (fold)
-\label{sec:basic_visualization}
-
-% section basic_visualization (end)
-
-
 % subsection exporting_metric_data_as_csv (end)
 
 % section getting_things_out_of_networkx (end)
+
+\section{Basic visualization} % (fold)
+\label{sec:basic_visualization}
+
+\subsection{Network visualization algorithms} % (fold)
+\label{sub:network_visualization_algorithms}
+
+% subsection network_visualization_algorithms (end)
+
+% section basic_visualization (end)
+
 
 
 \end{document}
