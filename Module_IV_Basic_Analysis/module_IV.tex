@@ -571,4 +571,51 @@ def highest_centrality(cent_dict):
 
 % section running_basic_centralities (end)
 
+\section{Getting things out of \texttt{NetworkX}} % (fold)
+\label{sec:getting_things_out_of_networkx}
+
+\subsection{Outputting network data} % (fold)
+\label{sub:outputting_network_data}
+
+\begin{frame}[fragile]
+    \frametitle{Exporting network data and analytics}
+    As powerful as NetworkX and the complementing scientific computing packages in Python are, it may often be useful or necessary to output your data for additional analysis
+    \begin{itemize}
+        \uncover<2->{\item Suite of tools lacks your specific need}
+        \uncover<3->{\item Require alternate visualization}
+        \uncover<4->{\item Storage for later analysis}
+    \end{itemize}
+    \uncover<5->{In most cases this will entail either exporting the raw network data, or metrics from some network analysis}
+    \begin{enumerate}
+        \uncover<6->{\item NetworkX can write out network data in as many formats as it can read them, and the process is equally straightforward}
+        \uncover<7->{\item When you want to export metrics we can use Python's built-in \texttt{XML} and \texttt{CSV} libraries}
+        \uncover<8->{\item Depending on your needs you may prefer one, the other or both}
+    \end{enumerate}
+    \uncover<9->{Next, we will review how to save data in different formats and export metrics to a \texttt{CSV} file using the Hartford drug net data}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Saving network data in different formats}
+    The syntax for exporting network data follows exactly the syntax for loading it
+    \begin{block}{NX syntax for loading a file}
+        \begin{tabular}{cccc}
+        $>>>$ & \alert<2>{write\_format(G}, & \alert<3>{``path/to/file.txt''}, & \alert<4>{\emph{...options...}}) \\
+        & \alert<2>{\uparrow} & \alert<3>{\uparrow} & \alert<4>{\uparrow} \\
+        & \alert<2>{\scriptsize{NX function, net variable}} & \alert<3>{\scriptsize{File to be written}} & \alert<4>{\scriptsize{Nodes/edge data, etc.}}
+        \end{tabular}
+    \end{block}
+    \uncover<5->{Let's try!
+    \begin{itemize}
+        \item Output the Hartford drug net data as an adjacency list
+        \item Add metric data to each node of the network 
+        \item Output new network in Pajek format with node attributes
+    \end{itemize}}
+\end{frame}
+
+
+% subsection outputting_network_data (end)
+
+% section getting_things_out_of_networkx (end)
+
+
 \end{document}
