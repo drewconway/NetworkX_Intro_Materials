@@ -277,23 +277,38 @@ def main():
     print("Actor "+str(highest_centrality(clo_cen))+" has the highest Closeness centrality")
     print("Actor "+str(highest_centrality(eig_cen))+" has the highest Eigenvector centrality")
     
-    #6.0 Plot Eigenvector centrality vs. betweeness in matplotlib
+    # 6.0 Finding community structure
+    clus=clustering(hartford_mc,with_labels=True)
+    # 6.1 Get counts of nodes membership for each clustering coefficient
+    unique_clus=list(unique(clus.values()))
+    clus_counts=zip(map(lambda c: clus.values().count(c),unique_clus),unique_clus)
+    clus_counts.sort()
+    clus_counts.reverse()
+    # 6.2 Create a subgraph from nodes with most frequent clustering coefficient
+    mode_clus_sg=subgraph(hartford_mc,[(a) for (a,b) in clus.items() if b==clus_counts[0][1]])
+    draw_spring(mode_clus_sg,with_labels=False,node_size=60,iterations=1000)
+    P.savefig('../../images/networks/mode_clus_sg.png')
+    
+    # 7.0 Plot Eigenvector centrality vs. betweeness in matplotlib
     centrality_scatter(bet_cen,eig_cen,"../../images/figures/drug_scatter.png",ylab="Eigenvector Centrality",xlab="Betweenness Centrality",title="Hartford Drug Network Key Actor Analysis",reg=True)
     
-    # 7.0 Outputting network data
+    # 8.0 Outputting network data
     # First, output the data as an adjaceny list
     write_adjlist(hartford_mc,"../../data/hartford_mc_adj.txt")
-    # 7.1 Add metric data to the network object
+    # 8.1 Add metric data to the network object
     hartford_mc_met=add_metric(hartford_mc,eig_cen)
     print(hartford_mc_met.nodes(data=True)[1:10])   # Check the the data was stored
-    # 7.2 output data using the Pajak format to save the node attribute data
+    # 8.2 output data using the Pajak format to save the node attribute data
     write_pajek(hartford_mc,"../../data/hartford_mc_metric.net")    # NX will automatically add all attibute data to output
     
-    # 8.0 Exporting data to a CSV file
+    # 9.0 Exporting data to a CSV file
     csv_data={"Betweeness":bet_cen,"Closeness":clo_cen,"Eigenvector":eig_cen}
-    # 8.1 After we have all the data in a single dict, we send it to out function
+    # 9.1 After we have all the data in a single dict, we send it to out function
     # to export the data as a CSV
     csv_exporter(csv_data,"../../data/drug_data.csv")
+    
+    # 10.0 Visualization basics
+    
     
 if __name__ == '__main__':
 	main()
