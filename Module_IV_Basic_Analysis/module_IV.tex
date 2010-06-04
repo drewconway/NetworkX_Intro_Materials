@@ -415,7 +415,7 @@ Average out degree:    1.0}}
 
 \begin{frame}[fragile]
     \frametitle{Running multiple measures}
-    For our first analysis in NetworkX, we will do some basic network manipulation, then run multiple measures to find highest centrality nodes
+    For our first analysis in \texttt{NetworkX}, we will do some basic network manipulation, then run multiple measures to find highest centrality nodes
     \begin{itemize}
         \item First, we will need to convert to an undirected network, and extract the main component
     \end{itemize}
@@ -579,7 +579,7 @@ def highest_centrality(cent_dict):
 
 \begin{frame}[fragile]
     \frametitle{Exporting network data and analytics}
-    As powerful as NetworkX and the complementing scientific computing packages in Python are, it may often be useful or necessary to output your data for additional analysis
+    As powerful as \texttt{NetworkX} and the complementing scientific computing packages in Python are, it may often be useful or necessary to output your data for additional analysis
     \begin{itemize}
         \uncover<2->{\item Suite of tools lacks your specific need}
         \uncover<3->{\item Require alternate visualization}
@@ -587,7 +587,7 @@ def highest_centrality(cent_dict):
     \end{itemize}
     \uncover<5->{In most cases this will entail either exporting the raw network data, or metrics from some network analysis}
     \begin{enumerate}
-        \uncover<6->{\item NetworkX can write out network data in as many formats as it can read them, and the process is equally straightforward}
+        \uncover<6->{\item \texttt{NetworkX} can write out network data in as many formats as it can read them, and the process is equally straightforward}
         \uncover<7->{\item When you want to export metrics we can use Python's built-in \texttt{XML} and \texttt{CSV} libraries}
         \uncover<8->{\item Depending on your needs you may prefer one, the other or both}
     \end{enumerate}
@@ -612,8 +612,92 @@ def highest_centrality(cent_dict):
     \end{itemize}}
 \end{frame}
 
+\begin{frame}[fragile]
+    \frametitle{Saving network data and adding node attributes}
+    As shown, this is a simple one line operation
+    \begin{block}{Output Hartford drug net data as an adjacency list}
+        \begin{code}
+write_adjlist(hartford_mc,"../../data/hartford_mc_adj.txt")
+        \end{code}
+    \end{block}
+    Next, we will add the Eigenvector centrality of each node to the graph object
+    \begin{block}{Adding node attributes}
+        \begin{code}
+def add_metric(G,met_dict):
+    """Adds metric data to G from a dictionary keyed by node labels"""
+    \alert<2>{if(G.nodes().sort()==met_dict.keys().sort()):}
+        \alert<3>{for i in met_dict.keys():
+            G.add_node(i,metric=met_dict[i])
+        return G}
+    \alert<2>{else:
+        raise ValueError("Node labels do not match")}
+        \end{code}
+    \end{block}
+    \begin{itemize}
+        \uncover<2->{\item Quick error checking}
+        \uncover<3->{\item Add node attribute as ``metric''}
+    \end{itemize}
+\end{frame}
+
 
 % subsection outputting_network_data (end)
+
+\subsection{Exporting metric data} % (fold)
+\label{sub:exporting_metric_data}
+
+\begin{frame}[fragile]
+    \frametitle{Using the Python \texttt{CSV} library}
+    Python has powerful built-in tools for reading and writing standard data formats
+    \begin{itemize}
+        \item One of the most useful, and frequently used, is the \texttt{CSV} library and the \texttt{DictWriter}
+    \end{itemize}
+    \begin{block}{Exporting centrality data to \texttt{CSV}}
+        \begin{code}
+\scriptsize{\alert<2>{import csv}
+...
+def csv_exporter(\alert<3>{data_dict,path}):
+    """Takes a dict of centralities keyed by column headers and exports 
+    data as a CSV file"""
+    \alert<4>{# Create column header list
+    col_headers=["Actor"]
+    col_headers.extend(data_dict.keys())}
+    \alert<5>{# Create CSV writer and write column headers
+    writer=csv.DictWriter(open(path,"w"),fieldnames=col_headers)
+    writer.writerow(dict((h,h) for h in col_headers))}
+    \alert<6>{# Write each row of data
+    for j in data_dict[col_headers[1]].keys():}
+        \alert<7>{# Create a new dict for each row
+        row=dict.fromkeys(col_headers)
+        row["Actor"]=j
+        for k in data_dict.keys():
+            row[k]=data_dict[k][j]
+        writer.writerow(row)}}
+        \end{code}
+    \end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{The results of CSV export}
+    \begin{columns}
+        \column{.5\textwidth}
+        We can now open the \texttt{CSV} file in our favorite spreadsheet program
+        \begin{itemize}
+            \item Perform traditional data exploration
+            \item Load into other analytics platforms for additional analysis (e.g., \texttt{R})
+            \item Store for latter use
+        \end{itemize}
+        \column{.5\textwidth}
+        \includegraphics[width=5.5cm]{../images/figures/metrics_screen_shot.png}
+    \end{columns}
+\end{frame}
+
+\section{Basic visualization} % (fold)
+\label{sec:basic_visualization}
+
+% section basic_visualization (end)
+
+
+% subsection exporting_metric_data_as_csv (end)
 
 % section getting_things_out_of_networkx (end)
 
