@@ -216,12 +216,12 @@ def add_metric(G,met_dict):
             G.add_node(i,metric=met_dict[i])
         return G
     else:
-        raise ValueError("Node labels do no match")
+        raise ValueError("Node labels do not match")
     
 def csv_exporter(data_dict,path):
     """Takes a dict of centralities keyed by column headers and exports 
     data as a CSV file"""
-    # Create column heaer list
+    # Create column header list
     col_headers=["Actor"]
     col_headers.extend(data_dict.keys())
     # Create CSV writer and write column headers
