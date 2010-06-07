@@ -150,16 +150,16 @@ Average out degree:    1.5896}
 
 % subsection local_network_data (end)
 
-\subsection{Connecting to a database} % (fold)
-\label{sub:connecting_to_a_database}
+% \subsection{Connecting to a database} % (fold)
+% \label{sub:connecting_to_a_database}
 
-\begin{frame}[fragile]
-    \frametitle{Building a network from a database}
-    As data sets become larger and persistently changing, it may make more sense to store them in a database rather than a single file
-    \begin{itemize}
-        \item As we have seen, Python provides binding to many modern database frameworks
-    \end{itemize}
-\end{frame}
+% \begin{frame}[fragile]
+%     \frametitle{Building a network from a database}
+%     As data sets become larger and persistently changing, it may make more sense to store them in a database rather than a single file
+%     \begin{itemize}
+%         \item As we have seen, Python provides binding to many modern database frameworks
+%    \end{itemize}
+% \end{frame}
 
 
 % subsection connecting_to_a_database (end)
@@ -489,19 +489,19 @@ def highest_centrality(cent_dict):
     Often in network analysis we are interested in estimating the cohesiveness of a network, or the communities that exists within the structure
     \vspace{3mm}
     
-    \textbf{Cliques}
+    \uncover<2->{\textbf{Cliques}
     \begin{itemize}
         \item Maximal cliques are the largest complete subgraph containing a given point.  There are several algorithms for finding cliques, including Bron & Kerbosch (1973), Tomita, Tanaka and Takahashi (2006), Cazals and Karande (2008)
-    \end{itemize}
-    \textbf{Clustering}
+    \end{itemize}}
+    \uncover<3->{\textbf{Clustering}
     \begin{itemize}
         \item For each node find the fraction of possible triangles that exist,$c_{v}=\frac{2T(v)}{deg(v)(deg(v)-1)}$, where $T(v)$ is the number of triangles through node $v$.
-    \end{itemize}
-    \textbf{Transitivity}
+    \end{itemize}}
+    \uncover<4->{\textbf{Transitivity}
     \begin{itemize}
         \item The fraction of all possible triangles which are in fact triangles. Or, $Trans=3\left(\frac{T}{t}\right)$, where $T=$ \# of possible triangles and $t=$ \# of actual triads
-    \end{itemize}
-    We will use clustering coefficients to identify community structure in the Hartford drug network
+    \end{itemize}}
+    \uncover<5->{We will use clustering coefficients to identify community structure in the Hartford drug network}
 \end{frame}
 
 \begin{frame}[fragile]
@@ -527,8 +527,11 @@ mode_clus_sg=subgraph(hartford_mc,[(a) for (a,b) in clus.items() if b==clus_coun
             \uncover<4->{\item More complex list comprehension with logic operator}
         \end{itemize}
         \column{.5\textwidth}
-            \uncover<5->{\includegraphics[width=5.2cm,clip,trim=1cm 1cm 1cm 1cm]{../images/networks/mode_clus_sg.png}}
+            \uncover<5->{\includegraphics[width=4.6cm,clip,trim=1cm 1cm 1cm 1cm]{../images/networks/mode_clus_sg.png}}
     \end{columns}
+    \begin{center}
+        \uncover<6->{\alert{Later, we'll learn how to create a network visualization like the one above}}
+    \end{center}
 \end{frame}
 
 
@@ -754,10 +757,165 @@ def csv_exporter(\alert<3>{data_dict,path}):
 \subsection{Network visualization algorithms} % (fold)
 \label{sub:network_visualization_algorithms}
 
+\begin{frame}[fragile]
+    \frametitle{What makes a good network visualization technique}
+    Development of visualization techniques and algorithms has become somewhat of a cottage industry
+    \uncover<2->{\begin{itemize}
+        \item Maximize ``visibility'' of network
+        \item Scale up to very large graphs
+        \item Display nodal- (centrality) of network-level (community structure) information
+    \end{itemize}}
+    \uncover<3->{\texttt{NetworkX} was designed as a data manipulation and analysis tool, and therefore is not meant as a visualization platform}
+    \uncover<4->{\begin{itemize}
+        \item \alert{It is, however, still capable of making very nice visualization}
+    \end{itemize}
+    \begin{tabular}{ccc}
+        \includegraphics[width=3cm]{../images/networks/art1.png} & \includegraphics[width=3cm]{../images/networks/knuth_miles.png} & \includegraphics[width=3cm]{../images/networks/degree_histogram.png}
+    \end{tabular}}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Visualization algorithms in \texttt{NetworkX} - Random \& Circle}
+    The most basic visualization techniques are the random and circular layouts
+    \begin{itemize}
+        \item The random layout places nodes in...random positions
+        \item The circular layout places nodes in...a circle
+    \end{itemize}
+    \begin{center}
+        \includegraphics[width=6cm,clip,trim=2cm 2cm 2cm 2cm]{../images/networks/rand_circ.png}
+    \end{center}
+    \begin{block}{Quick and dirty network viz}
+        \begin{code}
+# 10.1 Use subplots to draw random and circular layouts
+# of drug net side-by-side
+\alert<2>{fig1=P.figure(figsize=(9,4))
+fig1.add_subplot(121)}
+\alert<3>{draw_random(hartford_mc,with_labels=False,node_size=60)}
+\alert<4>{fig1.add_subplot(122)
+draw_circular(hartford_mc,with_labels=False,node_size=60)
+P.savefig("../../images/networks/rand_circ.png")}
+        \end{code}
+    \end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Visualization algorithms in \texttt{NetworkX} - Spring \& Spectral}
+    \begin{columns}
+        \column{.5\textwidth}
+        More commonly used visualization techniques include the spring and spectral layouts
+        \begin{itemize}
+            \uncover<2->{\item The spring layout is a version of the Fruchterman-Reingold force-directed algorithm, which attempts to minimize overlapping edges}
+            \uncover<3->{\item The spectral layout finds node position using the eigenvectors of the graph Laplacian, which is useful for quickly visualizing structural clustering}
+        \end{itemize}
+        \column{.5\textwidth}
+        \begin{center}
+            \uncover<2->{\includegraphics[width=3.5cm,clip,trim=2cm 2cm 2cm 2cm]{../images/networks/spring.png} \\}
+            \uncover<3->{\includegraphics[width=3.5cm,clip,trim=2cm 2cm 2cm 2cm]{../images/networks/spectral.png}}
+        \end{center}
+    \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Visualization algorithms in \texttt{NetworkX} - Shell}
+    The shell layout draws nodes as concentric circles
+    \begin{itemize}
+        \item Two dimensional extension of the circle layout
+        \item We may have some reason to isolate certain nodes
+    \end{itemize}
+    \begin{columns}
+        \column{.65\textwidth}
+            \begin{block}{Inner-circle as the 25th percentile Eigenvector centrality actors}
+                \begin{code}
+\scriptsize{P.figure(figsize=(8,8))
+\alert<2>{# Find actors in 25th percentile
+max_eig=max([(b) for (a,b) in eig_cen.items()])
+s1=[(a) for (a,b) in eig_cen.items() if b>=.25*max_eig]
+s2=hartford_mc.nodes()}
+\alert<3>{# setdiff1d is a very useful NumPy function!
+s2=list(setdiff1d(s2,s1))       
+shells=[s1,s2]}    
+\alert<4>{# Calculate position and draw          
+shell_pos=shell_layout(hartford_mc,shells)
+draw_networkx(hartford_mc,shell_pos,with_labels=False,node_size=60)
+P.savefig("../../images/networks/shell.png")}}
+                \end{code}
+            \end{block}
+        \column{.35\textwidth}
+            \uncover<5->{\includegraphics[width=4cm,clip,trim=4cm 4cm 4cm 4cm]{../images/networks/shell.png}}
+    \end{columns}
+    \uncover<-6>{Beyond layout algorithms, however, we may also want to add analytical data to our visualization}
+\end{frame}
+
 % subsection network_visualization_algorithms (end)
+
+\subsection{Adding analysis to visualization} % (fold)
+\label{sub:adding_analysis_to_visualization}
+
+\begin{frame}[fragile]
+    \frametitle{Changing node and edge size and colors}
+    NetworkX allows you to alter the size, color and shape of the nodes and edges in any visualization
+    \uncover<2->{\begin{itemize}
+        \item This can be particularly useful if we want to make some actors more prominent than others
+    \end{itemize}}
+    \uncover<3->{In our final exercise, we will add the following analysis to the Hartford drug network
+    \begin{itemize}
+        \item Node size by Eigenvector centrality
+        \item Intensity of node color by betweenness centrality
+        \item Edge thickness by edge betweenness
+    \end{itemize}}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{The code to add analysis to visualization}
+    \begin{block}{More list comprehension and \texttt{matplotlib} colormaps}
+        \begin{code}
+\alert<2>{# Adding analysis to visualization
+P.figure(figsize=(15,15))
+P.subplot(111,axisbg="lightgrey")
+spring_pos=spring_layout(hartford_mc,iterations=1000)}
+\alert<3>{# Use betweeneess centrality for node color intensity
+bet_color=bet_cen.items()
+bet_color.sort()
+bet_color=[(b) for (a,b) in bet_color]}
+\alert<4>{# Use Eigenvector centrality to set node size
+eig_size=eig_cen.items()
+eig_size.sort()
+eig_size=[((b)*2000)+20 for (a,b) in eig_size]}
+\alert<5>{# Use matplotlib's colormap for node intensity 
+draw_networkx(hartford_mc,spring_pos,node_color=bet_color,...
+    ...cmap=P.cm.Greens,node_size=eig_size,with_labels=False)
+P.savefig("../../images/networks/analysis.png")}
+        \end{code}
+    \end{block}
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \frametitle{Final visualization}
+    \begin{center}
+        \includegraphics[width=9cm,clip,trim=5cm 5cm 4cm 4cm]{../images/networks/analysis.png}
+    \end{center}
+\end{frame}
+
+% subsection adding_analysis_to_visualization (end)
 
 % section basic_visualization (end)
 
+\begin{frame}[plain]
+    \frametitle{Module IV Review}
+    Basic Analysis
+    \begin{itemize}
+        \uncover<2->{\item How to load local data, and an example of building networks from data streamed directly from the Internet}
+        \uncover<3->{\item A brief review of the Python \texttt{dict} data type}
+        \uncover<4->{\item Calculating basic metrics, how they are stored in \texttt{NetworkX} and how to manipulate them (list comps!)}
+        \uncover<5->{\item How to use \texttt{matplotlib} to visualize our analysis}
+        \uncover<6->{\item Getting data out of \texttt{NetworkX} both as raw network data or analytics using the \texttt{CSV} library}
+        \uncover<7->{\item Network visualization techniques in NetworkX and how to add network analysis to a visualziation}
+    \end{itemize}
+    \uncover<8->{\begin{center}
+        \Huge{Questions?}
+    \end{center}}
+\end{frame}
 
 
 \end{document}

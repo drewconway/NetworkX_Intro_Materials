@@ -24,8 +24,8 @@ from cjson import *
 from urllib import *
 from time import *
 from scipy import array,unique
-import pylab as P
-from numpy import polyfit
+import matplotlib.pyplot as P
+from numpy import polyfit,setdiff1d
 import csv
 
 def snowball_round(G,seeds,myspace=False):
@@ -235,6 +235,7 @@ def csv_exporter(data_dict,path):
         for k in data_dict.keys():
             row[k]=data_dict[k][j]
         writer.writerow(row)
+        
 
 def main():
     # 1.0 Loading a local data file
@@ -308,7 +309,51 @@ def main():
     csv_exporter(csv_data,"../../data/drug_data.csv")
     
     # 10.0 Visualization basics
+    # 10.1 Use subplots to draw random and circular layouts
+    # of drug net side-by-side
+    fig1=P.figure(figsize=(9,4))
+    fig1.add_subplot(121)
+    draw_random(hartford_mc,with_labels=False,node_size=60)
+    fig1.add_subplot(122)
+    draw_circular(hartford_mc,with_labels=False,node_size=60)
+    P.savefig("../../images/networks/rand_circ.png")
+    # 10.2 Draw spring, spectral layouts
+    P.figure(figsize=(8,8))
+    draw_spring(hartford_mc,with_labels=False,node_size=60,iterations=10000)
+    P.savefig("../../images/networks/spring.png")
+    P.figure(figsize=(8,8))
+    draw_spectral(hartford_mc,with_labels=False,node_size=60,iterations=10)
+    P.savefig("../../images/networks/spectral.png")
+    # 10.3 Draw shell layout with inner-circle as the 25th percentile 
+    # Eigenvector centrality actors
+    P.figure(figsize=(8,8))
+    # Find actors in 25th percentile
+    max_eig=max([(b) for (a,b) in eig_cen.items()])
+    s1=[(a) for (a,b) in eig_cen.items() if b>=.25*max_eig]
+    s2=hartford_mc.nodes()
+    # setdiff1d is a very useful NumPy function!
+    s2=list(setdiff1d(s2,s1))       
+    shells=[s1,s2]    
+    # Calculate psotion and draw          
+    shell_pos=shell_layout(hartford_mc,shells)
+    draw_networkx(hartford_mc,shell_pos,with_labels=False,node_size=60)
+    P.savefig("../../images/networks/shell.png")
     
+    # 11.0 Adding analysis to visualization
+    P.figure(figsize=(15,15))
+    P.subplot(111,axisbg="lightgrey")
+    spring_pos=spring_layout(hartford_mc,iterations=1000)
+    # 11.1 Use betweeneess centrality for node color intensity
+    bet_color=bet_cen.items()
+    bet_color.sort()
+    bet_color=[(b) for (a,b) in bet_color]
+    # 11.2 Use Eigenvector centrality to set node size
+    eig_size=eig_cen.items()
+    eig_size.sort()
+    eig_size=[((b)*2000)+20 for (a,b) in eig_size]
+    # 11.3 Use matplotlib's colormap for node intensity 
+    draw_networkx(hartford_mc,spring_pos,node_color=bet_color,cmap=P.cm.Greens,node_size=eig_size,with_labels=False)
+    P.savefig("../../images/networks/analysis.png")
     
 if __name__ == '__main__':
 	main()
