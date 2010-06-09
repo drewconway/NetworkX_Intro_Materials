@@ -278,6 +278,24 @@ def main():
     print("Actor "+str(highest_centrality(clo_cen))+" has the highest Closeness centrality")
     print("Actor "+str(highest_centrality(eig_cen))+" has the highest Eigenvector centrality")
     
+    # 6.0 Calculating degree distribution
+    ba_net=barabasi_albert_graph(1000,2)   # Create a Barabasi-Albert network
+    # 6.1 NX has a nice built-in function for degree distribution
+    dh=degree_histogram(ba_net)
+    # 6.2 Plot using same method as http://networkx.lanl.gov/examples/drawing/degree_histogram.html
+    pos=spring_layout(ba_net)
+    P.figure(figsize=(8,8))
+    P.loglog(dh,'b-',marker='o')
+    P.title("Degree rank plot (log-log)")
+    P.ylabel("Degree")
+    P.xlabel("Frequency")
+    # 6.4 Draw graph in inset
+    P.axes([0.45,0.45,0.45,0.45])
+    P.axis('off')
+    draw_networkx_nodes(ba_net,pos,node_size=20)
+    draw_networkx_edges(ba_net,pos,alpha=0.4)
+    P.savefig("../../images/figures/ba_10000.png")
+    
     # 6.0 Finding community structure
     clus=clustering(hartford_mc,with_labels=True)
     # 6.1 Get counts of nodes membership for each clustering coefficient
@@ -287,6 +305,7 @@ def main():
     clus_counts.reverse()
     # 6.2 Create a subgraph from nodes with most frequent clustering coefficient
     mode_clus_sg=subgraph(hartford_mc,[(a) for (a,b) in clus.items() if b==clus_counts[0][1]])
+    P.figure(figsize=(6,6))
     draw_spring(mode_clus_sg,with_labels=False,node_size=60,iterations=1000)
     P.savefig('../../images/networks/mode_clus_sg.png')
     
