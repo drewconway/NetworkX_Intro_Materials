@@ -1,5 +1,5 @@
 %
-%  untitled
+%  module_II.tex
 %
 %  Created by Drew Conway on 2010-05-24.
 % 
@@ -159,21 +159,21 @@
         \begin{block}{\scriptsize{Simple time-series network}}
             \begin{code}
 \tiny{G=DiGraph()
-\alert<2>{# Create datetime object nodes}
+\alert<2>{# Create datetime object nodes
 for v in xrange(num_nodes):
     G.add_node(datetime.now())
-time_nodes=G.nodes()
-\alert<3>{# Add edges with `time' attribute}
+time_nodes=G.nodes()}
+\alert<3>{# Add edges with `time' attribut
 for i in xrange(num_nodes):
     draws=random.uniform(0,1,num_nodes)
     for j in xrange(num_nodes):
         if i!=j and draws[j]<=p:
             G.add_edge(time_nodes[i],time_nodes[j],time=datetime.now())
-...
-\alert<4>{# target source datetime_created}
+...}
+\alert<4>{# target source datetime_created
 2010-05-25 13:38:42.515323 2010-05-25 13:38:42.515492 
     \{`time': datetime.datetime(2010, 5, 25, 13, 38, 42, 515752)\}
-...}
+...}}
                 \end{code}
             \end{block}
     \end{columns}
@@ -254,7 +254,7 @@ for i in xrange(num_nodes):
         \column{.68\textwidth}
         \begin{block}{\scriptsize{Load Sampson data and visualize with graphviz}}
             \begin{code}
-\tiny{\alert<2>{# Load Sampson monastery data from edglist}
+\tiny{\alert<2>{# Load Sampson monastery data from edgelist
 >>> g2=read_edgelist("samp_like_el.txt",delimiter="\textbackslash t",create_using=DiGraph())
 >>> info(g2)
 Name:                  
@@ -262,12 +262,12 @@ Type:                  DiGraph
 Number of nodes:       18
 Number of edges:       55
 Average in degree:     3.0556
-Average out degree:    3.0556
-\alert<3>{# Convert to pygraphviz type}
->>> g2_gv=to_agraph(g2)
-\alert<4>{# Output DOT file and draw using dot layout}
+Average out degree:    3.0556}
+\alert<3>{# Convert to pygraphviz type
+>>> g2_gv=to_agraph(g2)}
+\alert<4>{# Output DOT file and draw using dot layout
 >>> g2_gv.write("samp_like_dot.dot")
->>> g2_gv.draw('samp_like.png',prog='dot')}
+>>> g2_gv.draw('samp_like.png',prog='dot')}}
             \end{code}
         \end{block}
         \column{.32\textwidth}
@@ -363,7 +363,6 @@ Average out degree:    3.0556
     \end{center}
     \uncover<3->{\begin{itemize}
         \item This is just a small glance of all possible Python$\rightarrow$ DB bindings
-        \item \alert{Next, we will go over an example of building a network from a database}
     \end{itemize}}
 \end{frame}
 
