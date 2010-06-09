@@ -65,7 +65,6 @@
 	Loading data from multiple sources
 	\begin{itemize}
 	   \item Local network data files
-	   \item Connecting to a database
 	   \item Building directly from the Internet
 	\end{itemize}
 	\uncover<2->{Brief review of Python dictionaries
@@ -173,7 +172,7 @@ Average out degree:    1.5896}
         \column{.5\textwidth}
             \includegraphics[scale=0.38]{../images/logos/find-a-friend.png}
         \column{.5\textwidth}
-       Perhaps the most powerful aspect of NetworkX is its ability to work in Python to generate networks from live-streaming data
+       Perhaps the most powerful aspect of \texttt{NetworkX} is its ability to work in Python to generate networks from live-streaming data
         \begin{itemize}
             \uncover<2->{\item In Python, use \texttt{NetworkX}, \texttt{cjson} and a other standard scientific libraries to parse Google's SocialGraph data }
             \uncover<3->{\item Using a ``seed'' user, we will build out a network}
@@ -193,22 +192,22 @@ Average out degree:    1.5896}
         \column{.5\textwidth}
         \begin{block}{\scriptsize{Loading the libraries and setting things up}}
             \begin{code}
-\tiny{from cjson import *
+\tiny{\alert<2>{from cjson import *
 from urllib import *
 from networkx import *
 from time import *
 from scipy import array,unique
-...
+...}
 if __name__ == "__main__":
-    seed_url=``http://imichaeldotorg.livejournal.com"
+    \alert<3>{seed_url=``http://imichaeldotorg.livejournal.com"
     sg=get_sg(seed_url)
     net,newnodes=create_egonet(sg)
-    info(net)}
+    info(net)}}
                 \end{code}
             \end{block}}
         \column{.5\textwidth}
 \begin{code}
-\uncover<2->{\tiny{Name:                  [`http://imichaeldotorg.livejournal.com/']
+\uncover<7->{\tiny{Name:                  [`http://imichaeldotorg.livejournal.com/']
 Type:                  DiGraph
 Number of nodes:       5
 Number of edges:       5
@@ -219,16 +218,16 @@ Average out degree:    1.0}}
     \begin{block}{\scriptsize{Get the JSON from SocialGraph}}
         \begin{code}
     \tiny{def get_sg(seed_url):
-        sgapi_url="http://socialgraph.apis.google.com/lookup?q="+seed_url+"&edo=1&edi=1&fme=1&pretty=0"
-        try:
-            furl=urlopen(sgapi_url)
+        \alert<4>{sgapi_url="http://socialgraph.apis.google.com/lookup?q="+seed_url+"&edo=1&edi=1&fme=1&pretty=0"}
+        \alert<5>{try:}
+            \alert<6>{furl=urlopen(sgapi_url)
             fr=furl.read()
             furl.close()
-            return fr
-        except IOError:
+            return fr}
+        \alert<5>{except IOError:
             print "Could not connect to website"
             print sgapi_url
-            return {}}
+            return {}}}
         \end{code}
     \end{block}    
 \end{frame}
@@ -240,67 +239,67 @@ Average out degree:    1.0}}
         \begin{block}{\scriptsize{Creating the egonet}}
             \begin{code}
 \tiny{def create_egonet(s):
-    try:
-        raw=decode(s)
+    \alert<2>{try:}
+        \alert<3>{raw=decode(s)
         G=DiGraph()
         pendants=[]
         n=raw['nodes']
         nk=n.keys()
         G.name=str(nk)
-        pendants=[]
-        for a in range(0,len(nk)):
+        pendants=[]}
+        \alert<4>{for a in range(0,len(nk)):
             for b in range(0,len(nk)):
                 if a!=b:
-                    G.add_edge(nk[a],nk[b])
+                    G.add_edge(nk[a],nk[b])}
         for k in nk:
             ego=n[k]
-            ego_out=ego['nodes_referenced']
+            \alert<5>{ego_out=ego['nodes_referenced']
             for o in ego_out:
                 G.add_edge(k,o)
-                pendants.append(o)
-            ego_in=ego['nodes_referenced_by']
+                pendants.append(o)}
+            \alert<6>{ego_in=ego['nodes_referenced_by']
             for i in ego_in:
                 G.add_edge(i,k)
-                pendants.append(i)
-        pendants=array(pendants,dtype=str)
+                pendants.append(i)}
+        \alert<7>{pendants=array(pendants,dtype=str)
         pendants.flatten()
         pendants=unique(pendants)
-        return G,pendants
-    except DecodeError:
+        return G,pendants}
+    \alert<2>{except DecodeError:
     ...
-    except KeyError:}
+    except KeyError:}}
             \end{code}
         \end{block}
         \column{0.6\textwidth}
         \begin{block}{\scriptsize{Rolling the snowball}}
             \begin{code}
 \tiny{def snowball_round(G,seeds,myspace=False):
-    t0=time()
-    if myspace:
-        seeds=get_myspace_url(seeds)
+    \alert<8>{t0=time()}
+    \alert<9>{if myspace:
+        seeds=get_myspace_url(seeds)}
     sb_data=[]
-    for s in range(0,len(seeds)):
+    \alert<10>{for s in range(0,len(seeds)):
         s_sg=get_sg(seeds[s])
         new_ego,pen=create_egonet(s_sg)
         for p in pen:
-                sb_data.append(p)
-        if s<1:
+                sb_data.append(p)}
+        \alert<11>{if s<1:
             sb_net=compose(G,new_ego)
         else:
             sb_net=compose(new_ego,sb_net)
-        del new_ego
-        if s==round(len(seeds)*0.2):
+        del new_ego}
+        \alert<8>{if s==round(len(seeds)*0.2):
             sb_net.name='20% complete'
             sb_net.info()
             print 'AT: '+strftime('%m/%d/%Y, %H:%M:%S', gmtime())
             print ''
     ...
-    # More time keeping, probably a MUCH better way to do this
-    sb_data=array(sb_data)
+    # More time keeping, probably a MUCH better way to do this}
+    \alert<12>{sb_data=array(sb_data)
     sb_data.flatten()
     sb_data=unique(sb_data)
     sb_net.info()
-    return sb_net,sb_data}
+    return sb_net,sb_data}}
             \end{code}
         \end{block}
     \vspace{5mm}
@@ -479,6 +478,32 @@ def highest_centrality(cent_dict):
     \end{block}
 \end{frame}
 
+\begin{frame}[fragile]
+    \frametitle{Calculating degree distribution}
+    One of the most popular network level statistical description of a network is its degree distribution
+    \begin{itemize}
+        \item In \texttt{NetworkX} this is a simply one-line operation
+    \end{itemize}
+    \begin{columns}
+        \column{.6\textwidth}
+         \begin{block}{Get list of degree rank frequency}
+                \begin{code}
+# Create a Barabasi-Albert network
+>>> ba_net=barabasi_albert_graph(1000,2)   
+# 6.1 Built-in function for degree distribution
+>>> dh=degree_histogram(ba_net)
+                \end{code}
+         \end{block}
+         \uncover<2->{\begin{itemize}
+            \item As we will see next, we can use \texttt{matplotlib} to take this data and create publication ready plots
+            \item Ex. from \url{http://networkx.lanl.gov/examples/drawing/degree_histogram.html}
+         \end{itemize}}
+         \column{.4\textwidth}
+            \uncover<2->{\includegraphics[width=5cm]{../images/figures/BA_1000.png}}
+    \end{columns}
+\end{frame}
+
+
 % subsection calculating_centralities (end)
 
 \subsection{Calculating basic community structure} % (fold)
@@ -527,7 +552,9 @@ mode_clus_sg=subgraph(hartford_mc,[(a) for (a,b) in clus.items() if b==clus_coun
             \uncover<4->{\item More complex list comprehension with logic operator}
         \end{itemize}
         \column{.5\textwidth}
-            \uncover<5->{\includegraphics[width=4.6cm,clip,trim=1cm 1cm 1cm 1cm]{../images/networks/mode_clus_sg.png}}
+            \begin{center}
+                \uncover<5->{\includegraphics[width=3cm,clip,trim=2cm 2cm 2cm 2cm]{../images/networks/mode_clus_sg.png}}
+            \end{center}
     \end{columns}
     \begin{center}
         \uncover<6->{\alert{Later, we'll learn how to create a network visualization like the one above}}
@@ -615,11 +642,11 @@ mode_clus_sg=subgraph(hartford_mc,[(a) for (a,b) in clus.items() if b==clus_coun
     P.savefig(path,dpi=100)}}
         \end{code}
     \end{block}
-    \begin{itemize}
+    \scriptsize{\begin{itemize}
         \uncover<2->{\item Add a best fit line}
         \uncover<3->{\item Resize figure to fit data}
         \uncover<4->{\item Add labels, and save the figure as a PNG file}
-    \end{itemize}
+    \end{itemize}}
 \end{frame}
 
 
@@ -770,7 +797,7 @@ def csv_exporter(\alert<3>{data_dict,path}):
         \item \alert{It is, however, still capable of making very nice visualization}
     \end{itemize}
     \begin{tabular}{ccc}
-        \includegraphics[width=3cm]{../images/networks/art1.png} & \includegraphics[width=3cm]{../images/networks/knuth_miles.png} & \includegraphics[width=3cm]{../images/networks/degree_histogram.png}
+        \includegraphics[width=3cm]{../images/networks/art1.png} & \includegraphics[width=3cm]{../images/networks/knuth_miles.png} & \includegraphics[width=3cm]{../images/networks/random_geometric_graph.png}
     \end{tabular}}
 \end{frame}
 
@@ -853,7 +880,7 @@ P.savefig("../../images/networks/shell.png")}}
 
 \begin{frame}[fragile]
     \frametitle{Changing node and edge size and colors}
-    NetworkX allows you to alter the size, color and shape of the nodes and edges in any visualization
+    \texttt{NetworkX} allows you to alter the size, color and shape of the nodes and edges in any visualization
     \uncover<2->{\begin{itemize}
         \item This can be particularly useful if we want to make some actors more prominent than others
     \end{itemize}}
@@ -910,7 +937,7 @@ P.savefig("../../images/networks/analysis.png")}
         \uncover<4->{\item Calculating basic metrics, how they are stored in \texttt{NetworkX} and how to manipulate them (list comps!)}
         \uncover<5->{\item How to use \texttt{matplotlib} to visualize our analysis}
         \uncover<6->{\item Getting data out of \texttt{NetworkX} both as raw network data or analytics using the \texttt{CSV} library}
-        \uncover<7->{\item Network visualization techniques in NetworkX and how to add network analysis to a visualziation}
+        \uncover<7->{\item Network visualization techniques in \texttt{NetworkX} and how to add network analysis to a visualization}
     \end{itemize}
     \uncover<8->{\begin{center}
         \Huge{Questions?}
