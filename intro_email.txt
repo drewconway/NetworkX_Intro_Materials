@@ -1,0 +1,38 @@
+TO:     All workshop participants
+
+SUBJ:   Welcome to NetworkX Introduction Workshop
+
+BODY:
+
+Greetings social network hackers!
+
+Aric and I are very excited to see so many people signed up for our workshop at Sunbelt XXX, "NetworkX introduction: Hacking social networks using the Python programming language."  This email confirms your registrations; we are looking forward to meeting everyone and spending some time together learning NetworkX.  Our plan is for this workshop to be very interactive.  As such, to fully participate you will need bring your own laptop with all of the required software pre-installed.  To make sure everyone is on the same page for the 29th, below is a list of the software requirements.
+
+Required software (Python libraries denoted with *)
+Python v2.5, or greater
+NetworkX v1.0*
+matplotlib*
+NumPy*
+SciPy*
+
+Optional software
+Graphviz
+MayaVi
+pygraphviz*
+nose*
+cjson*
+
+If you work with a Python installation that you are currently using, than the best thing to do is to simply test that all of the above packages have been installed.  If you currently do not have a Python installation, or are unsure, the easiest thing to do is download the Enthought distribution, which comes pre-loaded with all of the above packages (and many more).  This can be downloaded for free to academics here: http://www.enthought.com/products/edudownload.php
+
+Once you have Python installed, you can test that all of the above packages are installed by running the small Python script attached to this email.  Once you have downloaded the script to your desktop, open a command-line prompt, navigate the appropriate directory and type:
+
+python package_test.py
+
+If everything is working properly you will receive a message indicating that all of the required packages have been installed.  Graphviz and MayaVI are both visualization software and will be used for demonstrations during the workshop, but are not necessary for participation.
+
+All for now, please feel free to send Aric and I any questions, comments or concerns you have regarding the workshop between now and Sunbelt.  Again, we are both very eager to meet everyone and begin hacking social networks!
+
+
+
+Best,
+Drew & Aric
