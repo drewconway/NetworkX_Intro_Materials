@@ -1,5 +1,5 @@
-#/Users/agconway/Documents/Sunbelt 2010/NetworkX_Intro_Materials/Module_IV_Basic_Analysis/Code/module_IV.py
-# GMT Wed Jun  9 19:08:36 2010
+#/Users/agconway/Documents/Sunbelt 2010/NetworkX_Intro_Materials/4-IV_Basic_Analysis/Code/module_IV.py
+# GMT Mon Jun 14 16:07:02 2010
 # Subgraph of ()
 1 9 2 10 
 2 10 143 9 
