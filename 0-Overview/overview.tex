@@ -1,0 +1,102 @@
+\documentclass[xcolor=dvipsnames, 9pt]{beamer}
+
+\newenvironment{code}{\begin{semiverbatim} \begin{footnotesize}}
+{\end{footnotesize}\end{semiverbatim}}
+
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{natbib}
+\usepackage{color}
+\usepackage{pdfsync}
+\usepackage{chancery}
+\usepackage{movie15}
+\usepackage{pgfpages}
+\usepackage{fancyvrb}
+\usepackage{colortbl}
+\usepackage{multirow}
+
+% \definecolor{white}{rgb}{255,255,255}
+% \definecolor{darkred}{rgb}{0.5,0,0}
+% \definecolor{darkgreen}{rgb}{0,0.5,0}
+% \definecolor{lightblue}{rgb}{0,0,0.7}
+
+% \hypersetup{colorlinks,
+%   linkcolor=white,
+%   filecolor=darkred,
+%   urlcolor=lightblue,
+%   citecolor=darkblue}
+
+\usepackage{beamerthemesplit}
+\usetheme{Copenhagen}
+\usecolortheme[named=Violet]{structure} 
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{itemize items}[triangle]
+\setbeamertemplate{enumerate items}[default]
+%\setbeameroption{show notes on second screen}
+% \logo{\includegraphics[width = 2cm]{../images/logos/500px-NYU_logo.png}}
+
+\newcommand{\R}{\mathbb{R}}
+\renewcommand{\d}{\mathsf{d}}
+\newcommand{\dd}{\partial}
+\newcommand{\E}{\mathsf{E}}
+\newcommand{\bb}{\mathbf}
+
+\graphicspath{{../images/figures/}{../images/logos/}{../images/graphs}/}
+
+\title{NetworkX: Hacking Social Networks with Python}
+\author{Drew Conway and Aric Hagberg}
+%\institute{\includegraphics[width = 4cm]{500px-NYU_logo.png}}
+\date{June 29, 2010}
+
+\begin{document}
+\begin{frame}[plain]
+\titlepage
+\end{frame}
+
+\begin{frame}
+\frametitle{Hacking}
+
+\begin{columns}
+\begin{column}{0.7\columnwidth}
+\LARGE
+Hacker
+
+      A person who delights in having an intimate understanding of the
+      internal workings of a system, computers and computer networks in
+      particular.\footnote{
+Internet Users' Glossary (Request for Comments 1392), January 1993.
+http://www.rfc-editor.org/rfc/rfc1392.txt}
+  
+\end{column}
+\end{columns}
+
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Overview}
+
+\begin{description}
+
+\item[1400-1430] Introduction to NetworkX (Hagberg)
+
+\item[1430-1500]  Why do SNA with NetworkX (Conway)
+
+\item[1500-1530] Getting started (Hagberg)
+
+\item[1530-1545] Break
+
+\item[1545-1645]  Basic Analysis (SNA) Conway
+
+\item[1645-1715] Developing new algorithms (Hagberg)
+
+\item[1715-????] Bring your own data/projects (Conway, Hagberg)
+
+\end{description}
+
+\end{frame}
+
+\end{document}
