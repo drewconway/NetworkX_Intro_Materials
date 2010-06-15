@@ -1,0 +1,11 @@
+# LaTeX junk
+*.aux
+*.log
+*.out
+*.pdfsync
+*.snm
+*.toc
+*.vrb
+*.nav
+# leftover backup files
+*.*~
