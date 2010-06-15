@@ -46,6 +46,19 @@
 
 \graphicspath{{../images/figures/}{../images/logos/}{../images/graphs}/}
 
+
+\usepackage{listings,bera}
+\definecolor{keywords}{RGB}{255,0,90}
+\definecolor{comments}{RGB}{60,179,113}
+\lstset{language=Python,
+        numbers=left,
+        showstringspaces=false,
+        frame=leftline,
+  keywordstyle=\color{keywords},
+  commentstyle=\color{comments}\emph
+}
+
+
 \title{5 - Developing Algorithms}
 \author{Drew Conway and Aric Hagberg}
 %\institute{\includegraphics[width = 4cm]{500px-NYU_logo.png}}
@@ -59,7 +72,6 @@
 \begin{frame}
 \frametitle{Outline}
 \begin{itemize}
-\item What is an algorithm
 \item Examples of some simple algorithms
 \item Writing a new algorithm
 \end{itemize}
@@ -71,14 +83,14 @@
 \begin{frame}[fragile]
 \frametitle{Feature: Compact code - building new generators}
 \centerline{\includegraphics[width=0.7\columnwidth]{model_title}}
-\centerline{\includegraphics[width=0.4\columnwidth]{model}}
+\centerline{\includegraphics[width=0.35\columnwidth]{model}}
 \end{frame}
 
 \begin{frame}[fragile]
 \frametitle{Feature: Compact code - building new generators}
 \begin{block}{}
 \tiny
-\begin{verbatim}
+\begin{lstlisting}
 import bisect
 import random
 from networkx import MultiDiGraph
@@ -102,17 +114,17 @@ def scale_free_graph(n, alpha=0.41,beta=0.54,delta_in=0.2,delta_out=0):
         r = random.random()
         if r < alpha:
             v = len(G) 
-            w = _choose_node(G, G.in_degree(with_labels=True),delta_in)
+            w = _choose_node(G, G.in_degree(),delta_in)
         elif r < alpha+beta:
-            v = _choose_node(G, G.out_degree(with_labels=True),delta_out)
-            w = _choose_node(G, G.in_degree(with_labels=True),delta_in)
+            v = _choose_node(G, G.out_degree(),delta_out)
+            w = _choose_node(G, G.in_degree(),delta_in)
         else:
-            v = _choose_node(G, G.out_degree(with_labels=True),delta_out)
+            v = _choose_node(G, G.out_degree(),delta_out)
             w = len(G) 
         G.add_edge(v,w)
     return G
 
-\end{verbatim}
+\end{lstlisting}
 \end{block}
 \end{frame}
 
@@ -124,7 +136,7 @@ def scale_free_graph(n, alpha=0.41,beta=0.54,delta_in=0.2,delta_out=0):
 \frametitle{Feature: Python expressivity - a simple algorithm}
 Python is easy to write and read
 \begin{block}{Breadth First Search}
-\begin{verbatim}
+\begin{lstlisting}
 from collections import deque
 
 def breadth_first_search(g, source):
@@ -136,11 +148,95 @@ def breadth_first_search(g, source):
         new = set(g[n]) - enqueued
         enqueued |= new
         queue.extend([(n, child) for child in new])
-\end{verbatim}
+\end{lstlisting}
 \end{block}
 Credit: Matteo Dell'Amico
 \end{frame}
 
+\begin{frame}
+\frametitle{Degree centrality}
+\begin{columns}
+\begin{column}{0.5\textwidth}
+For a graph with $n$ nodes
+\begin{equation*}
+C_D(v) = \frac{deg(v)}{n-1}
+\end{equation*}
+\centerline{\includegraphics[width=1.0\columnwidth]{star}}
+\end{column}
+\begin{column}{0.5\textwidth}
+\lstinputlisting[firstline=1]{code/degree_centrality.py.doctest}
 
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}
+\frametitle{Degree centrality 1}
+\lstinputlisting{code/degree_centrality1.py}
+\end{frame}
+
+\begin{frame}
+\frametitle{Degree centrality 2}
+\lstinputlisting{code/degree_centrality2.py}
+\end{frame}
+
+\begin{frame}
+\frametitle{Degree centrality 3}
+\lstinputlisting{code/degree_centrality3.py}
+\end{frame}
+
+\begin{frame}
+\frametitle{Degree centrality 4}
+\lstinputlisting[lastline=16]{code/degree_centrality4.py}
+\end{frame}
+
+\begin{frame}
+\tiny
+\frametitle{Degree centrality in NetworkX}
+\lstinputlisting{code/nx_degree_centrality.py}
+\end{frame}
+
+\begin{frame}
+\frametitle{Degree centrality 5}
+This algorithm is really a one-liner:
+\lstinputlisting{code/degree_centrality5.py}
+\end{frame}
+
+\begin{frame}
+\frametitle{Design Ego Graph}
+\centerline{Create network of neighbors centered at node n}
+\centerline{\includegraphics[width=0.7\columnwidth]{1311774-2c}}
+\end{frame}
+
+\begin{frame}
+\frametitle{Ego Graph: getting started}
+\begin{columns}
+\begin{column}{0.6\textwidth}
+\small
+\lstinputlisting{code/ego_graph.py}
+\end{column}
+\begin{column}{0.4\textwidth}
+\centerline{\includegraphics[width=0.7\columnwidth]{starfish.png}}
+\centerline{\includegraphics[width=0.7\columnwidth]{star.png}}
+
+
+Hints:
+\begin{itemize}
+\item only condsider Graph()
+\item use G.neighbors(v) 
+\item same as G[v]
+\item don't worry about attributes
+\end{itemize}
+
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}
+\frametitle{Ego Network}
+
+My solution.
+
+\end{frame}
 
 \end{document}

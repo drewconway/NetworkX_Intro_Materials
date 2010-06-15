@@ -1,0 +1,18 @@
+>>> G=nx.star_graph(3)
+>>> print G.edges()
+[(0, 1), (0, 2), (0, 3)]
+>>> print G.degree(0)
+2
+>>> print len(G) # number of nodes
+4
+>>> print G.degree(0)/3
+0
+>>> print G.degree(0)/3.0
+1
+>>> for v in G:
+...    print v, G.degree(v)/3.0
+0 1.0
+1 0.333333333333
+2 0.333333333333
+3 0.333333333333
+
