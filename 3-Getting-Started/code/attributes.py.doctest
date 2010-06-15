@@ -1,0 +1,44 @@
+>>> import networkx as nx
+# Assign graph attributes when creating a new graph
+
+>>> G = nx.Graph(day="Friday")
+>>> G.graph
+{'day': 'Friday'} # Python dictionary
+
+# Or you can modify attributes later
+
+>>> G.graph['day']='Monday'
+>>> G.graph
+{'day': 'Monday'}
+
+# Add node attributes using add_node(), add_nodes_from() or G.node
+>>> G.add_node(1, time='5pm')
+>>> G.node[1]['time']
+'5pm'
+>>> G.node[1] # Python dictionray
+{'time': '5pm'} 
+
+>>> G.add_nodes_from([3], time='2pm') # multiple nodes
+>>> G.node[1]['room'] = 714 # add new attribute
+
+>>> G.nodes(data=True)
+[(1, {'room': 714, 'time': '5pm'}), (3, {'time': '2pm'})]
+
+# Add edge attributes using add_edge(), add_edges_from(), 
+# subscript notation, or G.edge.
+>>> G.add_edge(1, 2, weight=4.0 )
+>>> G[1][2]['weight'] = 4.0 # edge already added
+>>> G.edge[1][2]['weight'] = 4.0 # edge already added
+
+>>> G[1][2]['weight']
+4.0
+>>> G[1][2]
+{'weight': 4.0}
+
+>>> G.add_edges_from([(3,4),(4,5)], color='red')
+>>> G.add_edges_from([(1,2,{'color':'blue'}), (2,3,{'weight':8})])
+
+>>> G.edges()
+[(1, 2), (2, 3), (3, 4), (4, 5)]
+>>> G.edges(data=True)
+[(1, 2, {'color': 'blue', 'weight': 4.0}), (2, 3, {'weight': 8}), (3, 4, {'color': 'red'}), (4, 5, {'color': 'red'})]
