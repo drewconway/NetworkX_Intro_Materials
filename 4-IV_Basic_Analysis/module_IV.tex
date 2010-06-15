@@ -6,48 +6,7 @@
 %
 \documentclass[xcolor=dvipsnames, 9pt]{beamer}
 
-\newenvironment{code}{\begin{semiverbatim} \begin{footnotesize}}
-{\end{footnotesize}\end{semiverbatim}}
-
-\usepackage{graphicx}
-\usepackage{amssymb}
-\usepackage{amsfonts}
-\usepackage{amsmath}
-\usepackage{hyperref}
-\usepackage{natbib}
-\usepackage{color}
-\usepackage{pdfsync}
-\usepackage{chancery}
-\usepackage{movie15}
-\usepackage{pgfpages}
-\usepackage{fancyvrb}
-\usepackage{colortbl}
-
-% \definecolor{white}{rgb}{255,255,255}
-% \definecolor{darkred}{rgb}{0.5,0,0}
-% \definecolor{darkgreen}{rgb}{0,0.5,0}
-% \definecolor{lightblue}{rgb}{0,0,0.7}
-
-% \hypersetup{colorlinks,
-%   linkcolor=white,
-%   filecolor=darkred,
-%   urlcolor=lightblue,
-%   citecolor=darkblue}
-
-\usepackage{beamerthemesplit}
-\usetheme{Copenhagen}
-\usecolortheme[named=Violet]{structure} 
-\setbeamertemplate{navigation symbols}{}
-\setbeamertemplate{itemize items}[triangle]
-\setbeamertemplate{enumerate items}[default]
-%\setbeameroption{show notes on second screen}
-%\logo{\includegraphics[width = 2cm]{nyulogo.png}}
-
-\newcommand{\R}{\mathbb{R}}
-\renewcommand{\d}{\mathsf{d}}
-\newcommand{\dd}{\partial}
-\newcommand{\E}{\mathsf{E}}
-\newcommand{\bb}{\mathbf}
+\input{../tex/workshop_style.tex}
 
 \title{Module IV - Basic Analysis}
 \author{Drew Conway and Aric Hagberg}
@@ -106,7 +65,7 @@
     \begin{block}{NX syntax for loading a file}
         \begin{tabular}{cccc}
         \alert<2>{$>>> G$} & = & \alert<3>{nx.read\_format(``path/to/file.txt''}, & \alert<4>{\emph{...options...}}) \\
-        \alert<2>{\uparrow} & & \alert<3>{\uparrow} & \alert<4>{\uparrow} \\
+        \alert<2>{$\uparrow$} & & \alert<3>{$\uparrow$} & \alert<4>{$\uparrow$} \\
         \alert<2>{\scriptsize{Net variable}} & & \alert<3>{\scriptsize{NX function, file directory path}} & \alert<4>{\scriptsize{Graph type, nodes type, etc.}}
         \end{tabular}
     \end{block}
@@ -200,9 +159,9 @@ if __name__ == "__main__":
     sg=get_sg(seed_url)
     net,newnodes=create_egonet(sg)
     nx.write_pajek(net,"../../data/"+seed+"_ego.net")
-    nx.info(net)}
+    nx.info(net)}}
                 \end{code}
-            \end{block}}
+            \end{block}
         \column{.5\textwidth}
 \begin{code}
 \uncover<7->{\tiny{Name:                  [`http://imichaeldotorg.livejournal.com/']
@@ -464,7 +423,7 @@ def highest_centrality(cent_dict):
                 \scriptsize{\item Given a dict: \texttt{d=\{1: 0.15, 2: 0.67\}}}
                 \scriptsize{\item \texttt{d.items()} $\rightarrow$ \texttt{[(1,0.15),(2,0.67)]}}
                 \scriptsize{\item \texttt{d=[(b,a) for (a,b in d)]} $\rightarrow$ \texttt{[(0.15,1),(0.67,2)]}}
-            \end{itemize}}}
+            \end{itemize}}
             \uncover<4->{Here, we use list comprehension in order to use Python's built-in \texttt{sort} and \texttt{reverse} list functions}
     \end{columns}
     \vspace{2mm}Now, just ask for the answer
@@ -497,7 +456,7 @@ def highest_centrality(cent_dict):
             \item Ex. from \url{http://networkx.lanl.gov/examples/drawing/degree_histogram.html}
          \end{itemize}}
          \column{.4\textwidth}
-            \uncover<2->{\includegraphics[width=5cm]{../images/figures/BA_1000.png}}
+            \uncover<2->{\includegraphics[width=5cm]{ba_1000}}
     \end{columns}
 \end{frame}
 
@@ -514,7 +473,7 @@ def highest_centrality(cent_dict):
     
     \uncover<2->{\textbf{Cliques}
     \begin{itemize}
-        \item Maximal cliques are the largest complete subgraph containing a given point.  There are several algorithms for finding cliques, including Bron & Kerbosch (1973), Tomita, Tanaka and Takahashi (2006), Cazals and Karande (2008)
+        \item Maximal cliques are the largest complete subgraph containing a given point.  There are several algorithms for finding cliques, including Bron \& Kerbosch (1973), Tomita, Tanaka and Takahashi (2006), Cazals and Karande (2008)
     \end{itemize}}
     \uncover<3->{\textbf{Clustering}
     \begin{itemize}
@@ -681,7 +640,7 @@ mode_clus_sg=subgraph(hartford_mc,[(a) for (a,b) in clus.items() if b==clus_coun
     \begin{block}{NX syntax for writing a network file}
         \begin{tabular}{cccc}
         $>>>$ & \alert<2>{nx.write\_format(G}, & \alert<3>{``path/to/file.txt''}, & \alert<4>{\emph{...options...}}) \\
-        & \alert<2>{\uparrow} & \alert<3>{\uparrow} & \alert<4>{\uparrow} \\
+        & \alert<2>{$\uparrow$} & \alert<3>{$\uparrow$} & \alert<4>{$\uparrow$} \\
         & \alert<2>{\scriptsize{NX function, net variable}} & \alert<3>{\scriptsize{File to be written}} & \alert<4>{\scriptsize{Nodes/edge data, etc.}}
         \end{tabular}
     \end{block}
