@@ -3,7 +3,7 @@
 [(0, 1), (0, 2), (0, 3)]
 >>> print G.degree(0)
 2
->>> print len(G) # number of nodes
+>>> print len(G) # # of nodes
 4
 >>> print G.degree(0)/3
 0
