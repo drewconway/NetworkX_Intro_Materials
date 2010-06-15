@@ -1,5 +1,4 @@
 \documentclass[xcolor=dvipsnames, 9pt]{beamer}
-
 \newenvironment{code}{\begin{semiverbatim} \begin{footnotesize}}
 {\end{footnotesize}\end{semiverbatim}}
 
@@ -46,12 +45,27 @@
 
 \graphicspath{{../images/figures/}{../images/logos/}{../images/graphs}/}
 
+\usepackage{listings,bera}
+\definecolor{keywords}{RGB}{255,0,90}
+\definecolor{comments}{RGB}{60,179,113}
+\lstset{language=Python,
+        numbers=left,
+        showstringspaces=false,
+        frame=leftline,
+  keywordstyle=\color{keywords},
+  commentstyle=\color{comments}\emph
+}
+
+
+
 \title{3 - Getting Started with NetworkX}
 \author{Drew Conway and Aric Hagberg}
 %\institute{\includegraphics[width = 4cm]{500px-NYU_logo.png}}
 \date{June 29, 2010}
 
 \begin{document}
+
+
 \begin{frame}[plain]
 \titlepage
 \end{frame}
@@ -60,142 +74,276 @@
 \frametitle{Outline}
 \begin{itemize}
 \item Running Python and loading NetworkX
+\item Creating a Graph, adding nodes and edges
 \item Finding what is in NetworkX
-\item What is a NetworkX Graph (network)
 \item Interacting with NetworkX graphs
+\item Graph generators and operators
+\item Basic analysis of graphs
 \end{itemize}
 \end{frame}
 
 \begin{frame}
-\frametitle{Running Python}
-Running the interpreter (IPython)
-Typing code at command line vs executing file
-No GUI
-\end{frame}
-
-
-\begin{frame}[fragile]
-\frametitle{Importing NetworkX}
-Start Python
-
-Import NetworkX using ``nx'' as a short name
-\begin{block}{}
-\begin{verbatim}
->>> import networkx as nx 
-\end{verbatim}
-\end{block}
-
+\frametitle{Running Python and loading NetworkX}
+%Running the interpreter (IPython)
+%Typing code at command line vs executing file
+IPython Command line 
+\centerline{\includegraphics[width=1.0\columnwidth]{nx-ipython}}
+No GUI \footnotesize{http://www.cryptonomicon.com/beginning.html}
 \end{frame}
 
 \begin{frame}
-\frametitle{What's in Networkx?}
-\begin{columns}[T]
-\begin{column}{0.5\textwidth}
-\centerline{\includegraphics[width=1.0\columnwidth]{networkx-doc}}
-\end{column}
-\begin{column}{0.5\textwidth}
-Figure showing command line help
-\end{column}
-\end{columns}
+\frametitle{Command line vs executing file}
+You can type commands interactively or put them in a file and run them.
+\centerline{\includegraphics[width=1.0\columnwidth]{ipython-import}}
 \end{frame}
 
+\begin{frame}
+\frametitle{The > > > (doctests)}
+\centerline{\includegraphics[width=1.0\columnwidth]{python-hello}}
+\end{frame}
 
+\begin{frame}
+\frametitle{Creating a graph}
+
+The basic $Graph$ object is used to hold the network information.
+
+Create an empty graph with no nodes and no edges:
+
+\begin{block}{}
+\lstinputlisting[firstline=1,lastline=4]{code/build_graph.py.doctest}
+\end{block}
+
+The graph G can be grown in several ways.
+
+NetworkX includes many graph generator functions 
+and facilities to read and write graphs in many formats.
+\end{frame}
+
+% FIXME interactive command line IPython, vs Python vs file
 
 \begin{frame}[fragile]
 \frametitle{Adding nodes}
 
-The basic $Graph$ class is used to hold the network information.
-Nodes can be added as follows:
 \begin{block}{}
-\begin{verbatim}
->>> G=nx.Graph()
->>> G.add_node(1) # integer
->>> G.add_node('a') # string
->>> print G.nodes()
-['a', 1]
-\end{verbatim}
+\lstinputlisting[firstline=5,lastline=17]{code/build_graph.py.doctest}
 \end{block}
-
-\end{frame}
-
-
-\begin{frame}[fragile]
-\frametitle{Feature: nodes can be ``anything''}
 
 Nodes can be any hashable object such as strings,
-numbers, files, functions, and more
-\begin{block}{}
-\begin{verbatim}
->>> import math
->>> G.add_node(math.cos) # cosine function
->>> fh=open('tmp.txt','w') 
->>> G.add_node(fh) # file handle
->>> print G.nodes()
-[<built-in function cos>, 
-<open file 'tmp.txt', mode 'w' at 0x30dc38>]
-\end{verbatim}
-\end{block}
-
+numbers, files, functions, and more.
 
 \end{frame}
 
 
+
 \begin{frame}[fragile]
-\frametitle{Adding edges}
-Edges, or links, between nodes are represented as tuples of nodes.  
-They can be added simply
+
+G can also be grown by adding edges.
+
 \begin{block}{}
-\begin{verbatim}
->>> G.add_edge(1,'a')
->>> G.add_edge('b',math.cos)
->>> print G.edges()
-[('b', <built-in function cos>), ('a', 1)]
-\end{verbatim}
+\lstinputlisting[firstline=18,lastline=35]{code/build_graph.py.doctest}
+
 \end{block}
 
 If the nodes do not already exist they are automatically added to the graph.
 
-% FIXME add picture?
+You can demolish the graph similarly with 
+\begin{verbatim}
+G.remove_node, G.remove_nodes_from, 
+G.remove_edge, G.remove_edges_from.
+\end{verbatim}
 
+\end{frame}
+
+% One can demolish the graph in a similar fashion; using 
+% :meth:`Graph.remove_node`,
+% :meth:`Graph.remove_nodes_from`, 
+% :meth:`Graph.remove_edge`
+% and 
+% :meth:`Graph.remove_edges_from`, e.g.
+
+
+\begin{frame}
+\Large
+\begin{itemize}
+
+\item How do I find out the names of the methods like add\_edge?
+
+\item How do I see what is in my graph?
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{What's in NetworkX?}
+\centerline{\includegraphics[width=1.2\columnwidth]{nx-doc-add}}
+\end{frame}
+
+\begin{frame}
+\frametitle{What's in NetworkX?}
+\centerline{\includegraphics[width=1.2\columnwidth]{nx-doc-add-1}}
+\end{frame}
+
+\begin{frame}
+\frametitle{What's in Networkx?}
+\centerline{\includegraphics[width=1.2\columnwidth]{nx-doc-add-2}}
+\end{frame}
+
+\begin{frame}
+\frametitle{What's in Networkx?}
+\centerline{\includegraphics[width=1.0\columnwidth]{nx-ipython-tab}}
+\end{frame}
+
+\begin{frame}
+\frametitle{What's in Networkx?}
+\centerline{\includegraphics[width=1.0\columnwidth]{nx-ipython-tab-add}}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{What's in Networkx?}
+\centerline{\includegraphics[width=1.0\columnwidth]{nx-ipython-tab-add}}
+\end{frame}
+
+% switch to live demo
+% show how to run file
+% run 
+% G.number_of_nodes()
+% G.number_of_edges()
+% G.nodes()
+% G.edges()
+
+\begin{frame}[fragile]
+\frametitle{Adding attributes to graphs, nodes, and edges}
+
+\begin{columns}
+\begin{column}{0.3\textwidth}
+
+(Almost) any Python object is allowed as graph, node, and edge data. 
+\begin{itemize}
+\item number
+\item string
+\item image
+\item IP address
+\item email address
+\end{itemize}
+\end{column}
+
+\begin{column}{0.7\textwidth}
+\centerline{\includegraphics[width=1.0\columnwidth]{enron}}
+\end{column}
+
+\end{columns}
+
+%Data assigned and stored in a Python dictionaries (default empty).
+%(But what are dictionaries? more later...)
 
 \end{frame}
 
 
 \begin{frame}[fragile]
-\frametitle{Edge can hold arbitrary data}
+\frametitle{Graph attributes}
+\lstinputlisting[firstline=1,lastline=12]{code/attributes.py.doctest}
 
-\begin{columns}[T]
+\end{frame}
 
+
+
+\begin{frame}[fragile]
+\frametitle{Node attributes}
+\lstinputlisting[firstline=13,lastline=25]{code/attributes.py.doctest}
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Edge attributes}
+\lstinputlisting[firstline=27,lastline=45]{code/attributes.py.doctest}
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Weighted graph example}
+\begin{columns}
 \begin{column}{0.7\textwidth}
-Any Python object is allowed as edge data 
+The special attribute 'weight'
+should be numeric and holds values used by algorithms requiring weighted edges.
 
-(e.g. number, string, image, file, ip address)
-
-Edge data assigned and stored in a Python dictionary (default empty).
-
-\bigskip
 Use Dijkstra's algorithm to find the shortest path:
 
 \end{column}
 
 \begin{column}{0.3\textwidth}
-\centerline{\includegraphics[width=1.5\columnwidth]{dijkstra}}
+\centerline{\includegraphics[width=1.4\columnwidth]{dijkstra}}
 \end{column}
 \end{columns}
 
 \begin{block}{}
-\begin{verbatim}
->>> G=nx.Graph()
->>> G.add_edge('a','b',weight=0.3)
->>> G.add_edge('b','c',weight=0.5)
->>> G.add_edge('a','c',weight=2.0)
->>> G.add_edge('c','d',weight=1.0)
->>> print nx.shortest_path(G,'a','d')
-['a', 'c', 'd']
->>> print nx.shortest_path(G,'a','d',weighted=True)
-['a', 'b', 'c', 'd']
-\end{verbatim}
+\lstinputlisting{code/dijkstra.py.doctest}
 \end{block}
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{More ways to build graphs: operators and generators}
+
+Applying classic graph operations
+
+\begin{description}
+
+\item[subgraph(G, nbunch)]      - induce subgraph of G on nodes in nbunch
+\item[union(G1,G2)]             - graph union
+\item[disjoint\_union(G1,G2)]    - graph union assuming all nodes are different
+\item[cartesian\_product(G1,G2)] - return Cartesian product graph
+\item[compose(G1,G2)]           - combine graphs identifying nodes common to both
+\item[complement(G)]            - graph complement 
+\item[create\_empty\_copy(G)]     - return an empty copy of the same graph class
+\item[convert\_to\_undirected(G)] - return an undirected representation of G
+\item[convert\_to\_directed(G)]   - return a directed representation of G
+\end{description}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Call a graph generator}
+
+\lstinputlisting[firstline=2]{code/generators.py.doctest}
+\end{frame}
+
+% FIXME add examples
+\begin{frame}
+ Read a graph stored in a file using common graph formats. 
+\begin{description}
+\item [edge lists]
+\item [adjacency lists]
+\item [GML]
+\item [GraphML]
+\item [Pajek]
+\item [LEDA]
+\end{description}
+
+\end{frame}
+
+
+% FIXME switch to interactive and show example of paste
+\begin{frame}[fragile]
+\frametitle{Basic analysis of graphs}
+
+\lstinputlisting[firstline=2]{code/analysis.py.doctest}
+
+% For values of specific nodes, you can provide a single node or an nbunch 
+% of nodes as argument.  If a single node is specified, then a single value 
+% is returned.  If an nbunch is specified, then the function will 
+% return a dictionary.
+ 
+% >>> nx.degree(G,1)
+% 2
+% >>> G.degree(1)
+% 2
+% >>> G.degree([1,2])
+% {1: 2, 2: 1}
+% >>> sorted(G.degree([1,2]).values())
+% [1, 2]
+% >>> sorted(G.degree().values())
+% [0, 1, 1, 2]
 
 \end{frame}
 
@@ -266,6 +414,7 @@ Use Dijkstra's algorithm to find the shortest path:
 % \end{itemize}
 
 % \end{frame}
+
 
 
 
