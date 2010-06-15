@@ -19,7 +19,7 @@ All rights reserved.
 
 import sys
 import os
-from networkx import *
+import networkx as nx
 from cjson import *
 from urllib import *
 from time import *
@@ -43,29 +43,29 @@ def snowball_round(G,seeds,myspace=False):
         for p in pen:
                 sb_data.append(p)
         if s<1:
-            sb_net=compose(G,new_ego)
+            sb_net=nx.compose(G,new_ego)
         else:
-            sb_net=compose(new_ego,sb_net)
+            sb_net=nx.compose(new_ego,sb_net)
         del new_ego
         if s==round(len(seeds)*0.2):
         # Simple progress output, useful for long jobs
             sb_net.name='20% complete'
-            info(sb_net)
+            nx.info(sb_net)
             print 'AT: '+strftime('%m/%d/%Y, %H:%M:%S', gmtime())
             print ''
         if s==round(len(seeds)*0.4):
             sb_net.name='40% complete'
-            info(sb_net)
+            nx.info(sb_net)
             print 'AT: '+strftime('%m/%d/%Y, %H:%M:%S', gmtime())
             print ''
         if s==round(len(seeds)*0.6):
             sb_net.name='60% complete'
-            info(sb_net)
+            nx.info(sb_net)
             print 'AT: '+strftime('%m/%d/%Y, %H:%M:%S', gmtime())
             print ''
         if s==round(len(seeds)*0.8):
             sb_net.name='80% complete'
-            info(sb_net)
+            nx.info(sb_net)
             print 'AT: '+strftime('%m/%d/%Y, %H:%M:%S', gmtime())
             print ''
         if s==len(seeds)-1:
@@ -76,7 +76,7 @@ def snowball_round(G,seeds,myspace=False):
     sb_data=array(sb_data)
     sb_data.flatten()
     sb_data=unique(sb_data)
-    info(sb_net)
+    nx.info(sb_net)
     return sb_net,sb_data
         
 def get_myspace_url(seeds):
@@ -93,7 +93,7 @@ def create_egonet(s):
     SocialGraph URL"""
     try:
         raw=decode(s)
-        G=DiGraph()
+        G=nx.DiGraph()
         pendants=[]
         n=raw['nodes']
         nk=n.keys()
@@ -121,12 +121,12 @@ def create_egonet(s):
         return G,pendants
     except DecodeError:
         print 'WEB ERROR--Returning empty DiGraph'
-        G=DiGraph()
+        G=nx.DiGraph()
         pendants=[]
         return G,pendants
     except KeyError:
         print 'NET BUILD ERROR FOR: '+str(nk)+'--Returning empty DiGraph'
-        G=DiGraph()
+        G=nx.DiGraph()
         pendants=[]
         return G,pendants
 
@@ -242,48 +242,48 @@ def main():
     # Load the Hartford drug users data, a directed binary graph.
     # We will specify that the graph be generated as a directed graph, and
     # that the nodes are integers (rather than strings)
-    hartford=read_edgelist("../../data/hartford_drug.txt",create_using=DiGraph(),nodetype=int)
-    info(hartford)  # Check the the data has been loaded properly
+    hartford=nx.read_edgelist("../../data/hartford_drug.txt",create_using=nx.DiGraph(),nodetype=int)
+    nx.info(hartford)  # Check the the data has been loaded properly
 
     # 2.0 Connecting to a database
 
     # 3.0 Building a network directly from the Internet
     # WARNING: This can take a long time to run!
-    '''seed="imichaeldotorg"   # Set the seed user within livejournal.com
+    seed="imichaeldotorg"   # Set the seed user within livejournal.com
     seed_url="http://"+seed+".livejournal.com"
     # 3.1 Scrape, parse and build seed's ego net
     sg=get_sg(seed_url)
     net,newnodes=create_egonet(sg)
-    write_pajek(net,"seed_ego.net") # Save data as Pajek
-    info(net)
+    nx.write_pajek(net,"../../data/"+seed+"_ego.net") # Save data as Pajek
+    nx.info(net)
     # 3.2 Perform snowball search, where k=2
     k=2
     for g in range(k):
         net,newnodes=snowball_round(net,newnodes)
-        write_pajek(net,seed+"_step_"+str(g+1)+".net")'''
+        nx.write_pajek(net,"../../data/"+seed+"_step_"+str(g+1)+".net")
     
     # 4.0 Calculate in-degree centrality for Hartford data
-    in_cent=in_degree_centrality(hartford)
+    in_cent=nx.in_degree_centrality(hartford)
     
     # 5.0 Calculating multiple measures, and finding
     # most central actors
     hartford_ud=hartford.to_undirected()
-    hartford_mc=connected_component_subgraphs(hartford_ud)[0]    # First, extract MC
+    hartford_mc=nx.connected_component_subgraphs(hartford_ud)[0]    # First, extract MC
     # 5.1 Calculate multiple measures on MC
-    bet_cen=betweenness_centrality(hartford_mc)
-    clo_cen=closeness_centrality(hartford_mc)
-    eig_cen=eigenvector_centrality(hartford_mc)
+    bet_cen=nx.betweenness_centrality(hartford_mc)
+    clo_cen=nx.closeness_centrality(hartford_mc)
+    eig_cen=nx.eigenvector_centrality(hartford_mc)
     # 5.2 Find the actors with the highest centrality for each measure,
     print("Actor "+str(highest_centrality(bet_cen))+" has the highest Betweenness centrality")
     print("Actor "+str(highest_centrality(clo_cen))+" has the highest Closeness centrality")
     print("Actor "+str(highest_centrality(eig_cen))+" has the highest Eigenvector centrality")
     
     # 6.0 Calculating degree distribution
-    ba_net=barabasi_albert_graph(1000,2)   # Create a Barabasi-Albert network
+    ba_net=nx.barabasi_albert_graph(1000,2)   # Create a Barabasi-Albert network
     # 6.1 NX has a nice built-in function for degree distribution
-    dh=degree_histogram(ba_net)
+    dh=nx.degree_histogram(ba_net)
     # 6.2 Plot using same method as http://networkx.lanl.gov/examples/drawing/degree_histogram.html
-    pos=spring_layout(ba_net)
+    pos=nx.spring_layout(ba_net)
     P.figure(figsize=(8,8))
     P.loglog(dh,'b-',marker='o')
     P.title("Degree rank plot (log-log)")
@@ -292,21 +292,21 @@ def main():
     # 6.4 Draw graph in inset
     P.axes([0.45,0.45,0.45,0.45])
     P.axis('off')
-    draw_networkx_nodes(ba_net,pos,node_size=20)
-    draw_networkx_edges(ba_net,pos,alpha=0.4)
+    nx.draw_networkx_nodes(ba_net,pos,node_size=20)
+    nx.draw_networkx_edges(ba_net,pos,alpha=0.4)
     P.savefig("../../images/figures/ba_10000.png")
     
     # 6.0 Finding community structure
-    clus=clustering(hartford_mc,with_labels=True)
+    clus=nx.clustering(hartford_mc,with_labels=True)
     # 6.1 Get counts of nodes membership for each clustering coefficient
     unique_clus=list(unique(clus.values()))
     clus_counts=zip(map(lambda c: clus.values().count(c),unique_clus),unique_clus)
     clus_counts.sort()
     clus_counts.reverse()
     # 6.2 Create a subgraph from nodes with most frequent clustering coefficient
-    mode_clus_sg=subgraph(hartford_mc,[(a) for (a,b) in clus.items() if b==clus_counts[0][1]])
+    mode_clus_sg=nx.subgraph(hartford_mc,[(a) for (a,b) in clus.items() if b==clus_counts[0][1]])
     P.figure(figsize=(6,6))
-    draw_spring(mode_clus_sg,with_labels=False,node_size=60,iterations=1000)
+    nx.draw_spring(mode_clus_sg,with_labels=False,node_size=60,iterations=1000)
     P.savefig('../../images/networks/mode_clus_sg.png')
     
     # 7.0 Plot Eigenvector centrality vs. betweeness in matplotlib
@@ -314,12 +314,12 @@ def main():
     
     # 8.0 Outputting network data
     # First, output the data as an adjaceny list
-    write_adjlist(hartford_mc,"../../data/hartford_mc_adj.txt")
+    nx.write_adjlist(hartford_mc,"../../data/hartford_mc_adj.txt")
     # 8.1 Add metric data to the network object
     hartford_mc_met=add_metric(hartford_mc,eig_cen)
     print(hartford_mc_met.nodes(data=True)[1:10])   # Check the the data was stored
     # 8.2 output data using the Pajak format to save the node attribute data
-    write_pajek(hartford_mc,"../../data/hartford_mc_metric.net")    # NX will automatically add all attibute data to output
+    nx.write_pajek(hartford_mc,"../../data/hartford_mc_metric.net")    # NX will automatically add all attibute data to output
     
     # 9.0 Exporting data to a CSV file
     csv_data={"Betweeness":bet_cen,"Closeness":clo_cen,"Eigenvector":eig_cen}
@@ -332,16 +332,16 @@ def main():
     # of drug net side-by-side
     fig1=P.figure(figsize=(9,4))
     fig1.add_subplot(121)
-    draw_random(hartford_mc,with_labels=False,node_size=60)
+    nx.draw_random(hartford_mc,with_labels=False,node_size=60)
     fig1.add_subplot(122)
-    draw_circular(hartford_mc,with_labels=False,node_size=60)
+    nx.draw_circular(hartford_mc,with_labels=False,node_size=60)
     P.savefig("../../images/networks/rand_circ.png")
     # 10.2 Draw spring, spectral layouts
     P.figure(figsize=(8,8))
-    draw_spring(hartford_mc,with_labels=False,node_size=60,iterations=10000)
+    nx.draw_spring(hartford_mc,with_labels=False,node_size=60,iterations=10000)
     P.savefig("../../images/networks/spring.png")
     P.figure(figsize=(8,8))
-    draw_spectral(hartford_mc,with_labels=False,node_size=60,iterations=10)
+    nx.draw_spectral(hartford_mc,with_labels=False,node_size=60,iterations=10)
     P.savefig("../../images/networks/spectral.png")
     # 10.3 Draw shell layout with inner-circle as the 25th percentile 
     # Eigenvector centrality actors
@@ -354,14 +354,14 @@ def main():
     s2=list(setdiff1d(s2,s1))       
     shells=[s1,s2]    
     # Calculate psotion and draw          
-    shell_pos=shell_layout(hartford_mc,shells)
-    draw_networkx(hartford_mc,shell_pos,with_labels=False,node_size=60)
+    shell_pos=nx.shell_layout(hartford_mc,shells)
+    nx.draw_networkx(hartford_mc,shell_pos,with_labels=False,node_size=60)
     P.savefig("../../images/networks/shell.png")
     
     # 11.0 Adding analysis to visualization
     P.figure(figsize=(15,15))
     P.subplot(111,axisbg="lightgrey")
-    spring_pos=spring_layout(hartford_mc,iterations=1000)
+    spring_pos=nx.spring_layout(hartford_mc,iterations=1000)
     # 11.1 Use betweeneess centrality for node color intensity
     bet_color=bet_cen.items()
     bet_color.sort()
@@ -371,7 +371,7 @@ def main():
     eig_size.sort()
     eig_size=[((b)*2000)+20 for (a,b) in eig_size]
     # 11.3 Use matplotlib's colormap for node intensity 
-    draw_networkx(hartford_mc,spring_pos,node_color=bet_color,cmap=P.cm.Greens,node_size=eig_size,with_labels=False)
+    nx.draw_networkx(hartford_mc,spring_pos,node_color=bet_color,cmap=P.cm.Greens,node_size=eig_size,with_labels=False)
     P.savefig("../../images/networks/analysis.png")
     
 if __name__ == '__main__':

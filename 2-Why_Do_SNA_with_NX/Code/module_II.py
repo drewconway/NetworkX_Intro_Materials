@@ -19,7 +19,7 @@ All rights reserved.
 
 import sys
 import os
-from networkx import *
+import networkx as nx
 import pylab as P
 from datetime import datetime
 from numpy import random
@@ -68,7 +68,7 @@ def time_series(num_nodes,p):
     p:          Probability of edge between nodes
     """
     if p>=0 and p<=1:
-        G=DiGraph()
+        G=nx.DiGraph()
         # Create datetime object nodes
         for v in xrange(num_nodes):
             G.add_node(datetime.now())
@@ -91,13 +91,13 @@ def main():
     
     # 2.0 Create NetowrkX objects with time-series data
     g1=time_series(100,.25)
-    write_edgelist(g1,'../../data/time_series.txt',data=True)
+    nx.write_edgelist(g1,'../../data/time_series.txt',data=True)
 
     # 3.0 Load Sampson monastery data and output as DOT
-    g2=read_edgelist("../../data/samp_like_el.txt",delimiter="\t",create_using=DiGraph())
-    info(g2)
+    g2=nx.read_edgelist("../../data/samp_like_el.txt",delimiter="\t",create_using=nx.DiGraph())
+    nx.info(g2)
     # Convert to pygraphviz type
-    g2_gv=to_agraph(g2)
+    g2_gv=nx.to_agraph(g2)
     # Output DOT file and draw using dot layout
     g2_gv.write("../../data/samp_like_dot.dot")
     g2_gv.draw('../../images/networks/samp_like.png',prog='dot')

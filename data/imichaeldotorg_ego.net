@@ -1,0 +1,13 @@
+*network ['http://imichaeldotorg.livejournal.com/']
+*vertices 5
+1 "http://cynicalcutie.livejournal.com/" 0.000000 0.000000 ellipse 
+2 "http://fri3d-egg.livejournal.com/" 0.000000 0.000000 ellipse 
+3 "http://onabeechtree.livejournal.com/" 0.000000 0.000000 ellipse 
+4 "http://imichaeldotorg.livejournal.com/" 0.000000 0.000000 ellipse 
+5 "http://littion.livejournal.com/" 0.000000 0.000000 ellipse 
+*arcs
+3 4 1.000000 
+4 1 1.000000 
+4 2 1.000000 
+4 3 1.000000 
+4 5 1.000000 

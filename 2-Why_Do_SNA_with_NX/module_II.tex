@@ -51,8 +51,8 @@
 \newcommand{\bb}{\mathbf}
 
 \title{Module II - Why do SNA in \texttt{NetworkX}}
-\author{Drew Conway --- Department of Politics}
-\institute{\includegraphics[width = 4cm]{../images/logos/500px-NYU_logo.png}}
+\author{Drew Conway and Aric Hagberg}
+% \institute{\includegraphics[width = 4cm]{../images/logos/500px-NYU_logo.png}}
 \date{June 29, 2010}
 
 \begin{document} 
@@ -156,9 +156,9 @@
             \item In \texttt{NetworkX}, we simply use the built-in Python \texttt{datetime} package to create a network of time-stamps
         \end{itemize}}
         \column{.7\textwidth}
-        \begin{block}{\scriptsize{Simple time-series network}}
+        \begin{block}{}
             \begin{code}
-\tiny{G=DiGraph()
+\tiny{G=nx.DiGraph()
 \alert<2>{# Create datetime object nodes
 for v in xrange(num_nodes):
     G.add_node(datetime.now())
@@ -252,11 +252,11 @@ for i in xrange(num_nodes):
     \end{itemize}
     \begin{columns}
         \column{.68\textwidth}
-        \begin{block}{\scriptsize{Load Sampson data and visualize with graphviz}}
+        \begin{block}{}
             \begin{code}
 \tiny{\alert<2>{# Load Sampson monastery data from edgelist
->>> g2=read_edgelist("samp_like_el.txt",delimiter="\textbackslash t",create_using=DiGraph())
->>> info(g2)
+>>> g2=nx.read_edgelist("samp_like_el.txt",create_using=nx.DiGraph())
+>>> nx.info(g2)
 Name:                  
 Type:                  DiGraph
 Number of nodes:       18
@@ -264,10 +264,10 @@ Number of edges:       55
 Average in degree:     3.0556
 Average out degree:    3.0556}
 \alert<3>{# Convert to pygraphviz type
->>> g2_gv=to_agraph(g2)}
+>>> g2_gv=nx.to_agraph(g2)}
 \alert<4>{# Output DOT file and draw using dot layout
->>> g2_gv.write("samp_like_dot.dot")
->>> g2_gv.draw('samp_like.png',prog='dot')}}
+>>> g2_gv.write(``1samp_like_dot.dot'')
+>>> g2_gv.draw(``samp_like.png'',prog=``dot'')}}
             \end{code}
         \end{block}
         \column{.32\textwidth}

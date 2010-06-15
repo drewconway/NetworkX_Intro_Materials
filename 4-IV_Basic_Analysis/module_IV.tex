@@ -50,8 +50,8 @@
 \newcommand{\bb}{\mathbf}
 
 \title{Module IV - Basic Analysis}
-\author{Drew Conway --- Department of Politics}
-\institute{\includegraphics[width = 4cm]{../images/logos/500px-NYU_logo.png}}
+\author{Drew Conway and Aric Hagberg}
+%\institute{\includegraphics[width = 4cm]{../images/logos/500px-NYU_logo.png}}
 \date{June 29, 2010}
 
 \begin{document} 
@@ -105,7 +105,7 @@
     \end{itemize}
     \begin{block}{NX syntax for loading a file}
         \begin{tabular}{cccc}
-        \alert<2>{$>>> G$} & = & \alert<3>{read\_format(``path/to/file.txt''}, & \alert<4>{\emph{...options...}}) \\
+        \alert<2>{$>>> G$} & = & \alert<3>{nx.read\_format(``path/to/file.txt''}, & \alert<4>{\emph{...options...}}) \\
         \alert<2>{\uparrow} & & \alert<3>{\uparrow} & \alert<4>{\uparrow} \\
         \alert<2>{\scriptsize{Net variable}} & & \alert<3>{\scriptsize{NX function, file directory path}} & \alert<4>{\scriptsize{Graph type, nodes type, etc.}}
         \end{tabular}
@@ -114,20 +114,16 @@
     \begin{itemize}
         \item We will load the edge list of Hartford drug users network
         \item Specify that the network be a directed graph, and the nodes be integers
-        \item Use \texttt{info()} to check that data has been loaded correctly
+        \item Use \texttt{nx.info()} to check that data has been loaded correctly
     \end{itemize}}
-    \begin{center}
-        \uncover<6->{\alert<6>{It's time to fire up your console and load Python!}}
-    \end{center}
 \end{frame}
 
 \begin{frame}[fragile]
     \frametitle{Loading the Hartford drug users network}
     \begin{block}{Starting \texttt{NetworkX} and loading data}
         \begin{code}
-\scriptsize{>>> from networkx import *
->>> hartford=\alert<3>{read_edgelist}("\alert<4>{../../data/hartford_drug.txt}",\alert<5>{create_using=DiGraph()},\alert<6>{nodetype=int})
->>> \alert<7>{info(hartford)}
+\scriptsize{>>> hartford=\alert<3>{nx.read_edgelist}("\alert<4>{../../data/hartford_drug.txt}",\alert<5>{create_using=nx.DiGraph()},\alert<6>{nodetype=int})
+>>> \alert<7>{nx.info(hartford)}
 Name:                  
 Type:                  DiGraph
 Number of nodes:       212
@@ -190,19 +186,21 @@ Average out degree:    1.5896}
     \frametitle{The code, part 1}
     \begin{columns}
         \column{.5\textwidth}
-        \begin{block}{\scriptsize{Loading the libraries and setting things up}}
+        \begin{block}{\scriptsize{Loading the libraries and scraping egonet}}
             \begin{code}
 \tiny{\alert<2>{from cjson import *
 from urllib import *
-from networkx import *
 from time import *
 from scipy import array,unique
 ...}
 if __name__ == "__main__":
-    \alert<3>{seed_url=``http://imichaeldotorg.livejournal.com"
+    \alert<3>{seed="imichaeldotorg" 
+    seed_url="http://"+seed+".livejournal.com"
+    # 3.1 Scrape, parse and build seed's ego net
     sg=get_sg(seed_url)
     net,newnodes=create_egonet(sg)
-    info(net)}}
+    nx.write_pajek(net,"../../data/"+seed+"_ego.net")
+    nx.info(net)}
                 \end{code}
             \end{block}}
         \column{.5\textwidth}
@@ -215,7 +213,7 @@ Average in degree:     1.0
 Average out degree:    1.0}}
 \end{code}
     \end{columns}
-    \begin{block}{\scriptsize{Get the JSON from SocialGraph}}
+    \begin{block}{}
         \begin{code}
     \tiny{def get_sg(seed_url):
         \alert<4>{sgapi_url="http://socialgraph.apis.google.com/lookup?q="+seed_url+"&edo=1&edi=1&fme=1&pretty=0"}
@@ -241,7 +239,7 @@ Average out degree:    1.0}}
 \tiny{def create_egonet(s):
     \alert<2>{try:}
         \alert<3>{raw=decode(s)
-        G=DiGraph()
+        G=nx.DiGraph()
         pendants=[]
         n=raw['nodes']
         nk=n.keys()
@@ -284,13 +282,13 @@ Average out degree:    1.0}}
         for p in pen:
                 sb_data.append(p)}
         \alert<11>{if s<1:
-            sb_net=compose(G,new_ego)
+            sb_net=nx.compose(G,new_ego)
         else:
-            sb_net=compose(new_ego,sb_net)
+            sb_net=nx.compose(new_ego,sb_net)
         del new_ego}
         \alert<8>{if s==round(len(seeds)*0.2):
             sb_net.name='20% complete'
-            sb_net.info()
+            nx.info(sb_net)
             print 'AT: '+strftime('%m/%d/%Y, %H:%M:%S', gmtime())
             print ''
     ...
@@ -298,7 +296,7 @@ Average out degree:    1.0}}
     \alert<12>{sb_data=array(sb_data)
     sb_data.flatten()
     sb_data=unique(sb_data)
-    sb_net.info()
+    nx.info(sb_net)
     return sb_net,sb_data}}
             \end{code}
         \end{block}
@@ -379,16 +377,16 @@ Average out degree:    1.0}}
     \begin{columns}
         \column{.45\textwidth}
         From the documentation...\\ \vspace{3mm}
-        \only<1>{\includegraphics[width=5cm]{../images/figures/closeness_doc.png}}\only<2>{\includegraphics[width=5cm]{../images/figures/closeness_doc_2.png}}
+        \includegraphics[width=5cm]{../images/figures/closeness_doc.png}
         \column{.55\textwidth}
         \texttt{NetworkX}'s metric's make extensive use of the dict type
         \begin{itemize}
             \item In this case the key$\rightarrow$value mapping is of the form: \texttt{\{node\_label: metric\}} 
         \end{itemize}
         Let's look at an example:
-        \begin{block}{In-degree centrality of Hartford data}
+        \begin{block}{}
             \begin{code}
-\scriptsize{>>> in_cen=in_degree_centrality(hartford)
+\scriptsize{>>> in_cen=nx.in_degree_centrality(hartford)
 >>> in_cen
 \{1: 0.014218009478672987, 2: 0.018957345971563982,...
 ...
@@ -418,24 +416,24 @@ Average out degree:    1.0}}
     \begin{itemize}
         \item First, we will need to convert to an undirected network, and extract the main component
     \end{itemize}
-    \begin{block}{Find main component \& symmetrize}
+    \begin{block}{}
         \begin{code}
 # Many of the centrality metrics require undirected graphs, so we will symmetrize
 >>> \alert<2>{hartford_ud=hartford.to_undirected()}
 # The network also has many small components, but for
 # this analysis we are interested in the largest
->>> \alert<3>{hartford_mc=hartford_main=connected_component_subgraphs(hartford_ud)[0]}
+>>> \alert<3>{hartford_mc=hartford_main=nx.connected_component_subgraphs(hartford_ud)[0]}
         \end{code}
     \end{block}
     Next, we will calculate multiple measures
-    \begin{block}{Computing multiple centralities}
+    \begin{block}{}
         \begin{code}
 # Betweenness centrality
->>> \alert<4>{bet_cen=betweenness_centrality(hartford_mc)}
+>>> \alert<4>{bet_cen=nx.betweenness_centrality(hartford_mc)}
 # Closeness centrality
->>> \alert<4>{clo_cen=closeness_centrality(hartford_mc)}
+>>> \alert<4>{clo_cen=nx.closeness_centrality(hartford_mc)}
 # Eigenvector centrality
->>> \alert<4>{eig_cen=eigenvector_centrality(hartford_mc)}
+>>> \alert<4>{eig_cen=nx.eigenvector_centrality(hartford_mc)}
         \end{code}
     \end{block}
 \end{frame}
@@ -444,8 +442,8 @@ Average out degree:    1.0}}
     \frametitle{Finding most central actors}
     To find the most central actors we will use Python's list comprehension technique to do basic data manipulation on our centrality dictionaries
     \begin{columns}
-        \column{.6\textwidth}
-            \begin{block}{Function for finding most central actor}
+        \column{.57\textwidth}
+            \begin{block}{}
         \begin{code}
 def highest_centrality(cent_dict):
     """Returns node key with largest value from
@@ -460,7 +458,7 @@ def highest_centrality(cent_dict):
     return cent_items[0][1]}
         \end{code}
             \end{block}
-            \column{.4\textwidth}
+            \column{.43\textwidth}
             \uncover<3->{List comprehension
             \begin{itemize}
                 \scriptsize{\item Given a dict: \texttt{d=\{1: 0.15, 2: 0.67\}}}
@@ -680,9 +678,9 @@ mode_clus_sg=subgraph(hartford_mc,[(a) for (a,b) in clus.items() if b==clus_coun
 \begin{frame}[fragile]
     \frametitle{Saving network data in different formats}
     The syntax for exporting network data follows exactly the syntax for loading it
-    \begin{block}{NX syntax for loading a file}
+    \begin{block}{NX syntax for writing a network file}
         \begin{tabular}{cccc}
-        $>>>$ & \alert<2>{write\_format(G}, & \alert<3>{``path/to/file.txt''}, & \alert<4>{\emph{...options...}}) \\
+        $>>>$ & \alert<2>{nx.write\_format(G}, & \alert<3>{``path/to/file.txt''}, & \alert<4>{\emph{...options...}}) \\
         & \alert<2>{\uparrow} & \alert<3>{\uparrow} & \alert<4>{\uparrow} \\
         & \alert<2>{\scriptsize{NX function, net variable}} & \alert<3>{\scriptsize{File to be written}} & \alert<4>{\scriptsize{Nodes/edge data, etc.}}
         \end{tabular}
@@ -700,7 +698,7 @@ mode_clus_sg=subgraph(hartford_mc,[(a) for (a,b) in clus.items() if b==clus_coun
     As shown, this is a simple one line operation
     \begin{block}{Output Hartford drug net data as an adjacency list}
         \begin{code}
-write_adjlist(hartford_mc,"../../data/hartford_mc_adj.txt")
+nx.write_adjlist(hartford_mc,"../../data/hartford_mc_adj.txt")
         \end{code}
     \end{block}
     Next, we will add the Eigenvector centrality of each node to the graph object
@@ -734,7 +732,7 @@ def add_metric(G,met_dict):
     \begin{itemize}
         \item One of the most useful, and frequently used, is the \texttt{CSV} library and the \texttt{DictWriter}
     \end{itemize}
-    \begin{block}{Exporting centrality data to \texttt{CSV}}
+    \begin{block}{}
         \begin{code}
 \scriptsize{\alert<2>{import csv}
 ...
@@ -811,15 +809,15 @@ def csv_exporter(\alert<3>{data_dict,path}):
     \begin{center}
         \includegraphics[width=6cm,clip,trim=2cm 2cm 2cm 2cm]{../images/networks/rand_circ.png}
     \end{center}
-    \begin{block}{Quick and dirty network viz}
+    \begin{block}{}
         \begin{code}
-# 10.1 Use subplots to draw random and circular layouts
+# Use subplots to draw random and circular layouts
 # of drug net side-by-side
 \alert<2>{fig1=P.figure(figsize=(9,4))
 fig1.add_subplot(121)}
-\alert<3>{draw_random(hartford_mc,with_labels=False,node_size=60)}
+\alert<3>{nx.draw_random(hartford_mc,with_labels=False,node_size=60)}
 \alert<4>{fig1.add_subplot(122)
-draw_circular(hartford_mc,with_labels=False,node_size=60)
+nx.draw_circular(hartford_mc,with_labels=False,node_size=60)
 P.savefig("../../images/networks/rand_circ.png")}
         \end{code}
     \end{block}
@@ -850,8 +848,8 @@ P.savefig("../../images/networks/rand_circ.png")}
         \item We may have some reason to isolate certain nodes
     \end{itemize}
     \begin{columns}
-        \column{.65\textwidth}
-            \begin{block}{Inner-circle as the 25th percentile Eigenvector centrality actors}
+        \column{.7\textwidth}
+            \begin{block}{25th percentile Eigenvector centrality actors}
                 \begin{code}
 \scriptsize{P.figure(figsize=(8,8))
 \alert<2>{# Find actors in 25th percentile
@@ -867,10 +865,11 @@ draw_networkx(hartford_mc,shell_pos,with_labels=False,node_size=60)
 P.savefig("../../images/networks/shell.png")}}
                 \end{code}
             \end{block}
-        \column{.35\textwidth}
-            \uncover<5->{\includegraphics[width=4cm,clip,trim=4cm 4cm 4cm 4cm]{../images/networks/shell.png}}
+        \column{.3\textwidth}
+            \uncover<5->{\includegraphics[width=3.8cm,clip,trim=4cm 4cm 4cm 4cm]{../images/networks/shell.png}}
     \end{columns}
-    \uncover<-6>{Beyond layout algorithms, however, we may also want to add analytical data to our visualization}
+    \vspace{2mm}
+    \uncover<6->{Beyond layout, we may also want to add analytical data to our visualization}
 \end{frame}
 
 % subsection network_visualization_algorithms (end)
@@ -899,7 +898,7 @@ P.savefig("../../images/networks/shell.png")}}
 \alert<2>{# Adding analysis to visualization
 P.figure(figsize=(15,15))
 P.subplot(111,axisbg="lightgrey")
-spring_pos=spring_layout(hartford_mc,iterations=1000)}
+spring_pos=nx.spring_layout(hartford_mc,iterations=1000)}
 \alert<3>{# Use betweeneess centrality for node color intensity
 bet_color=bet_cen.items()
 bet_color.sort()
