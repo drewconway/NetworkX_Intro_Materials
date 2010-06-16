@@ -80,16 +80,16 @@
 \begin{frame}[fragile]
     \frametitle{Loading the Hartford drug users network}
     \begin{block}{Starting \texttt{NetworkX} and loading data}
-        \begin{code}
-\scriptsize{>>> hartford=\alert<3>{nx.read_edgelist}("\alert<4>{../../data/hartford_drug.txt}",\alert<5>{create_using=nx.DiGraph()},\alert<6>{nodetype=int})
->>> \alert<7>{nx.info(hartford)}
+        \scriptsize{\begin{lstlisting}[language=Python]
+>>> hartford=nx.read_edgelist("../../data/hartford_drug.txt",create_using=nx.DiGraph(),nodetype=int)
+>>> nx.info(hartford)
 Name:                  
 Type:                  DiGraph
 Number of nodes:       212
 Number of edges:       337
 Average in degree:     1.5896
 Average out degree:    1.5896}
-        \end{code}
+        \end{lstlisting}}
     \end{block}
 \uncover<2->{What did we just do?}
 \begin{itemize}
@@ -143,49 +143,37 @@ Average out degree:    1.5896}
 
 \begin{frame}[fragile]
     \frametitle{The code, part 1}
-    \begin{columns}
-        \column{.5\textwidth}
-        \begin{block}{\scriptsize{Loading the libraries and scraping egonet}}
-            \begin{code}
-\tiny{\alert<2>{from cjson import *
+        \begin{block}{\scriptsize{Loading the libraries}}
+            \tiny{\begin{lstlisting}[language=Python]
+from cjson import *
 from urllib import *
 from time import *
 from scipy import array,unique
-...}
+...
 if __name__ == "__main__":
-    \alert<3>{seed="imichaeldotorg" 
+    seed="imichaeldotorg" 
     seed_url="http://"+seed+".livejournal.com"
-    # 3.1 Scrape, parse and build seed's ego net
+    # Scrape, parse and build seed's ego net
     sg=get_sg(seed_url)
     net,newnodes=create_egonet(sg)
     nx.write_pajek(net,"../../data/"+seed+"_ego.net")
-    nx.info(net)}
-                \end{code}
-            \end{block}}
-        \column{.5\textwidth}
-\begin{code}
-\uncover<7->{\tiny{Name:                  [`http://imichaeldotorg.livejournal.com/']
-Type:                  DiGraph
-Number of nodes:       5
-Number of edges:       5
-Average in degree:     1.0
-Average out degree:    1.0}}
-\end{code}
-    \end{columns}
-    \begin{block}{}
-        \begin{code}
-    \tiny{def get_sg(seed_url):
-        \alert<4>{sgapi_url="http://socialgraph.apis.google.com/lookup?q="+seed_url+"&edo=1&edi=1&fme=1&pretty=0"}
-        \alert<5>{try:}
-            \alert<6>{furl=urlopen(sgapi_url)
-            fr=furl.read()
-            furl.close()
-            return fr}
-        \alert<5>{except IOError:
-            print "Could not connect to website"
-            print sgapi_url
-            return {}}}
-        \end{code}
+    nx.info(net)
+                \end{lstlisting}}
+            \end{block}
+    \begin{block}{Scraping egonet relationships from seed}
+        \tiny{\begin{lstlisting}[language=Python]
+def get_sg(seed_url):
+    sgapi_url="http://socialgraph.apis.google.com/lookup?q="+seed_url+"&edo=1&edi=1&fme=1&pretty=0"
+    try:
+        furl=urlopen(sgapi_url)
+        fr=furl.read()
+        furl.close()
+        return fr
+    except IOError:
+        print "Could not connect to website"
+        print sgapi_url
+        return {}
+        \end{lstlisting}}
     \end{block}    
 \end{frame}
 
@@ -194,70 +182,70 @@ Average out degree:    1.0}}
     \begin{columns}
         \column{0.4\textwidth}
         \begin{block}{\scriptsize{Creating the egonet}}
-            \begin{code}
-\tiny{def create_egonet(s):
-    \alert<2>{try:}
-        \alert<3>{raw=decode(s)
+            \tiny{\begin{lstlisting}[language=Python]
+def create_egonet(s):
+    try:
+        raw=decode(s)
         G=nx.DiGraph()
         pendants=[]
         n=raw['nodes']
         nk=n.keys()
         G.name=str(nk)
-        pendants=[]}
-        \alert<4>{for a in range(0,len(nk)):
+        pendants=[]
+        for a in range(0,len(nk)):
             for b in range(0,len(nk)):
                 if a!=b:
-                    G.add_edge(nk[a],nk[b])}
+                    G.add_edge(nk[a],nk[b])
         for k in nk:
             ego=n[k]
-            \alert<5>{ego_out=ego['nodes_referenced']
+            ego_out=ego['nodes_referenced']
             for o in ego_out:
                 G.add_edge(k,o)
-                pendants.append(o)}
-            \alert<6>{ego_in=ego['nodes_referenced_by']
+                pendants.append(o)
+            ego_in=ego['nodes_referenced_by']
             for i in ego_in:
                 G.add_edge(i,k)
-                pendants.append(i)}
-        \alert<7>{pendants=array(pendants,dtype=str)
+                pendants.append(i)
+        pendants=array(pendants,dtype=str)
         pendants.flatten()
         pendants=unique(pendants)
-        return G,pendants}
-    \alert<2>{except DecodeError:
+        return G,pendants
+    except DecodeError:
     ...
-    except KeyError:}}
-            \end{code}
+    except KeyError:
+            \end{lstlisting}}
         \end{block}
         \column{0.6\textwidth}
         \begin{block}{\scriptsize{Rolling the snowball}}
-            \begin{code}
-\tiny{def snowball_round(G,seeds,myspace=False):
-    \alert<8>{t0=time()}
-    \alert<9>{if myspace:
-        seeds=get_myspace_url(seeds)}
+            \tiny{\begin{lstlisting}[language=Python]
+def snowball_round(G,seeds,myspace=False):
+    t0=time()
+    if myspace:
+        seeds=get_myspace_url(seeds)
     sb_data=[]
-    \alert<10>{for s in range(0,len(seeds)):
+    for s in range(0,len(seeds)):
         s_sg=get_sg(seeds[s])
         new_ego,pen=create_egonet(s_sg)
         for p in pen:
-                sb_data.append(p)}
-        \alert<11>{if s<1:
+                sb_data.append(p)
+        if s<1:
             sb_net=nx.compose(G,new_ego)
         else:
             sb_net=nx.compose(new_ego,sb_net)
-        del new_ego}
-        \alert<8>{if s==round(len(seeds)*0.2):
+        del new_ego
+        if s==round(len(seeds)*0.2):
             sb_net.name='20% complete'
             nx.info(sb_net)
             print 'AT: '+strftime('%m/%d/%Y, %H:%M:%S', gmtime())
             print ''
     ...
-    # More time keeping, probably a MUCH better way to do this}
-    \alert<12>{sb_data=array(sb_data)
+    # More time keeping, probably a MUCH better way to do this
+    sb_data=array(sb_data)
     sb_data.flatten()
     sb_data=unique(sb_data)
     nx.info(sb_net)
-    return sb_net,sb_data}}
-            \end{code}
+    return sb_net,sb_data
+            \end{lstlisting}}
         \end{block}
     \vspace{5mm}
     \end{columns}
@@ -304,24 +292,24 @@ Average out degree:    1.0}}
 \begin{frame}[fragile]
     \frametitle{Python Dictionaries}
     \uncover<1->{The \texttt{dict} type is a data structure that represents a key$\rightarrow$value mapping}
-    \uncover<2->{\begin{block}{Working with the dict type}}
-        \begin{code}
-\uncover<2->{\alert<2>{\# Keys and values can be of any data type}}
-\uncover<2->{>>> fruit\_dict=\{"apple":1,"orange":[0.23,0.11],"banana":True \}} \newline
-\uncover<3->{\alert<3>{\# Can retrieve the keys and values as Python lists (vector)}
->>> fruit\_dict.keys()
-["orange","apple","banana"]} \newline
-\uncover<4->{\alert<4>{\# Or create a (key,value) tuple}
->>> fruit\_dict.items()
-[("orange",[0.23,0.11]),("apple",1),("Banana",True)]}
-\uncover<5->{\alert<5>{\# This becomes especially useful when you master Python ``list comprehension''}}
-            \end{code}
+    \begin{block}{Working with the dict type}
+        \scriptsize{\begin{lstlisting}[language=Python]
+# Keys and values can be of any data type
+>>> fruit_dict={"apple":1,"orange":[0.23,0.11],"banana":True}
+# Can retrieve the keys and values as Python lists (vector)
+>>> fruit_dict.keys()
+["orange","apple","banana"]
+# Or create a (key,value) tuple
+>>> fruit_dict.items()
+[("orange",[0.23,0.11]),("apple",1),("Banana",True)]
+# This becomes especially useful when you master Python ``list comprehension''
+            \end{lstlisting}}
         \end{block}
-\uncover<6->{The Python dictionary is an extremely flexible and useful data structure, making it one of the primary advantages of Python over other languages
+\uncover<2->{The Python dictionary is an extremely flexible and useful data structure, making it one of the primary advantages of Python over other languages
 \begin{itemize}
     \item This is particularly useful when performing analysis on networks, where node labels are natural keys
 \end{itemize}}
-\uncover<7->{\begin{center}
+\uncover<3->{\begin{center}
     \alert{Now, try creating a \texttt{dict} of your own}
 \end{center}}
 \end{frame}
@@ -344,13 +332,13 @@ Average out degree:    1.0}}
         \end{itemize}
         Let's look at an example:
         \begin{block}{}
-            \begin{code}
-\scriptsize{>>> in_cen=nx.in_degree_centrality(hartford)
+            \scriptsize{\begin{lstlisting}[language=Python]
+>>> in_cen=nx.in_degree_centrality(hartford)
 >>> in_cen
 \{1: 0.014218009478672987, 2: 0.018957345971563982,...
 ...
-90: 0.0047393364928909956, 293: 0.0\}}
-            \end{code}
+90: 0.0047393364928909956, 293: 0.0\}
+            \end{lstlisting}}
         \end{block}
         We can see that node \#90 has in-degree centrality 0.0047
         \begin{itemize}
@@ -376,24 +364,24 @@ Average out degree:    1.0}}
         \item First, we will need to convert to an undirected network, and extract the main component
     \end{itemize}
     \begin{block}{}
-        \begin{code}
-# Many of the centrality metrics require undirected graphs, so we will symmetrize
->>> \alert<2>{hartford_ud=hartford.to_undirected()}
+        \scriptsize{\begin{lstlisting}[language=Python]
+# We will symmetrize for simplcity
+>>> hartford_ud=hartford.to_undirected()
 # The network also has many small components, but for
 # this analysis we are interested in the largest
->>> \alert<3>{hartford_mc=hartford_main=nx.connected_component_subgraphs(hartford_ud)[0]}
-        \end{code}
+>>> hartford_mc=hartford_main=nx.connected_component_subgraphs(hartford_ud)[0]
+        \end{lstlisting}}
     \end{block}
     Next, we will calculate multiple measures
     \begin{block}{}
-        \begin{code}
+        \scriptsize{\begin{lstlisting}[language=Python]
 # Betweenness centrality
->>> \alert<4>{bet_cen=nx.betweenness_centrality(hartford_mc)}
+>>> bet_cen=nx.betweenness_centrality(hartford_mc)
 # Closeness centrality
->>> \alert<4>{clo_cen=nx.closeness_centrality(hartford_mc)}
+>>> clo_cen=nx.closeness_centrality(hartford_mc)
 # Eigenvector centrality
->>> \alert<4>{eig_cen=nx.eigenvector_centrality(hartford_mc)}
-        \end{code}
+>>> eig_cen=nx.eigenvector_centrality(hartford_mc)
+        \end{lstlisting}}
     \end{block}
 \end{frame}
 
@@ -403,35 +391,35 @@ Average out degree:    1.0}}
     \begin{columns}
         \column{.57\textwidth}
             \begin{block}{}
-        \begin{code}
+        \tiny{\begin{lstlisting}[language=Python]
 def highest_centrality(cent_dict):
     """Returns node key with largest value from
     NX centrality dict"""
-    \alert<2>{# Create ordered tuple of centrality data
-    cent_items=cent_dict.items()}
-    \alert<3>{# List comprehension!
-    cent_items=[(b,a) for (a,b) in cent_items]}
-    \alert<4>{# Sort in descending order
+    # Create ordered tuple of centrality data
+    cent_items=cent_dict.items()
+    # List comprehension!
+    cent_items=[(b,a) for (a,b) in cent_items]
+    # Sort in descending order
     cent_items.sort()
     cent_items.reverse()
-    return cent_items[0][1]}
-        \end{code}
+    return cent_items[0][1]
+        \end{lstlisting}}
             \end{block}
             \column{.43\textwidth}
-            \uncover<3->{List comprehension
+            \uncover<2->{List comprehension
             \begin{itemize}
                 \scriptsize{\item Given a dict: \texttt{d=\{1: 0.15, 2: 0.67\}}}
                 \scriptsize{\item \texttt{d.items()} $\rightarrow$ \texttt{[(1,0.15),(2,0.67)]}}
                 \scriptsize{\item \texttt{d=[(b,a) for (a,b in d)]} $\rightarrow$ \texttt{[(0.15,1),(0.67,2)]}}
-            \end{itemize}}}
-            \uncover<4->{Here, we use list comprehension in order to use Python's built-in \texttt{sort} and \texttt{reverse} list functions}
+            \end{itemize}}
+            \uncover<3->{Here, we use list comprehension in order to use Python's built-in \texttt{sort} and \texttt{reverse} list functions}
     \end{columns}
     \vspace{2mm}Now, just ask for the answer
     \begin{block}{Finding Most central actors}
-        \begin{code}
-\scriptsize{>>>  print("Actor "+str(highest_centrality(bet_cen))+" has the highest Betweenness centrality")
-\alert<5->{Actor 82 has the highest Betweenness centrality}}
-        \end{code}
+        \tiny{\begin{lstlisting}[language=Python]
+>>>  print("Actor "+str(highest_centrality(bet_cen))+" has the highest Betweenness centrality")
+Actor 82 has the highest Betweenness centrality
+        \end{lstlisting}}
     \end{block}
 \end{frame}
 
@@ -444,12 +432,12 @@ def highest_centrality(cent_dict):
     \begin{columns}
         \column{.6\textwidth}
          \begin{block}{Get list of degree rank frequency}
-                \begin{code}
+                \scriptsize{\begin{lstlisting}[language=Python]
 # Create a Barabasi-Albert network
 >>> ba_net=barabasi_albert_graph(1000,2)   
-# 6.1 Built-in function for degree distribution
+# Built-in function for degree distribution
 >>> dh=degree_histogram(ba_net)
-                \end{code}
+                \end{lstlisting}}
          \end{block}
          \uncover<2->{\begin{itemize}
             \item As we will see next, we can use \texttt{matplotlib} to take this data and create publication ready plots
@@ -489,17 +477,17 @@ def highest_centrality(cent_dict):
 \begin{frame}[fragile]
     \frametitle{Toy community detection example (not a good one)}
     \begin{block}{Calculating clustering coefficients}
-        \begin{code}
-\scriptsize{\alert<2>{# Calculate clustering coefficients of each node (return as dict)
-clus=clustering(hartford_mc,with_labels=True)}
-\alert<3>{# Get counts of nodes membership for each clustering coefficient, and clean up
+        \scriptsize{\begin{lstlisting}[language=Python]
+# Calculate clustering coefficients of each node (return as dict)
+clus=clustering(hartford_mc,with_labels=True)
+# Get counts of nodes membership for each clustering coefficient, and clean up
 unique_clus=list(unique(clus.values()))
 clus_counts=zip(map(lambda c: clus.values().count(c),unique_clus),unique_clus)
 clus_counts.sort()
-clus_counts.reverse()}
-\alert<4>{# Create a subgraph from nodes with most frequent clustering coefficient
-mode_clus_sg=subgraph(hartford_mc,[(a) for (a,b) in clus.items() if b==clus_counts[0][1]])}}         
-        \end{code}
+clus_counts.reverse()
+# Create a subgraph from nodes with most frequent clustering coefficient
+mode_clus_sg=subgraph(hartford_mc,[(a) for (a,b) in clus.items() if b==clus_counts[0][1]])       
+        \end{lstlisting}}
     \end{block}
     \begin{columns}
         \column{.5\textwidth}
@@ -548,23 +536,23 @@ mode_clus_sg=subgraph(hartford_mc,[(a) for (a,b) in clus.items() if b==clus_coun
 \begin{frame}[fragile]
     \frametitle{Creating a key actor plot in \texttt{matplotlib}}
         \begin{block}{The \texttt{centrality\_scatter} function, part one}
-            \begin{code}
-\scriptsize{def centrality_scatter(met_dict1,met_dict2,path="",ylab="",xlab="",title="",reg=False):
-    \alert<2>{# Create figure and drawing axis
+            \scriptsize{\begin{lstlisting}[language=Python]
+def centrality_scatter(met_dict1,met_dict2,path="",ylab="",xlab="",title="",reg=False):
+    # Create figure and drawing axis
     fig=P.figure(figsize=(7,7))
-    ax1=fig.add_subplot(111)}
-    \alert<3>{# Create items so actors can be sorted properly
+    ax1=fig.add_subplot(111)
+    # Create items so actors can be sorted properly
     met_items1=met_dict1.items()
     met_items2=met_dict2.items()
     met_items1.sort()
     met_items2.sort()
     # Grab data
     xdata=[(b) for (a,b) in met_items1]
-    ydata=[(b) for (a,b) in met_items2]}
-    \alert<4>{# Add each actor to the plot by ID
+    ydata=[(b) for (a,b) in met_items2]
+    # Add each actor to the plot by ID
     for p in xrange(len(met_items1)):
-        ax1.text(x=xdata[p],y=ydata[p],s=str(met_items1[p][0]),color="indigo")}}
-            \end{code}
+        ax1.text(x=xdata[p],y=ydata[p],s=str(met_items1[p][0]),color="indigo")
+            \end{lstlisting}}
         \end{block}
     \begin{itemize}
         \uncover<2->{\item Create a canvas to draw on}
@@ -575,11 +563,11 @@ mode_clus_sg=subgraph(hartford_mc,[(a) for (a,b) in clus.items() if b==clus_coun
 
 \begin{frame}[fragile]
     \frametitle{Creating a key actor plot in \texttt{matplotlib}}
-    \begin{block}{The \texttt{centrality\_scatter} function, part one}
-        \begin{code}
-\scriptsize{def centrality_scatter(met_dict1,met_dict2,path="",ylab="",xlab="",title="",reg=False):
+    \begin{block}{The \texttt{centrality\_scatter} function, part two}
+        \scriptsize{\begin{lstlisting}[language=Python]
+def centrality_scatter(met_dict1,met_dict2,path="",ylab="",xlab="",title="",reg=False):
 ...
-    \alert<2>{# If adding a best fit line, we will use NumPy to calculate the points.
+    # If adding a best fit line, we will use NumPy to calculate the points.
     if reg:
         # Function returns y-intercept and slope.  So, we create a function to 
         # draw LOBF from this data
@@ -587,17 +575,17 @@ mode_clus_sg=subgraph(hartford_mc,[(a) for (a,b) in clus.items() if b==clus_coun
         xline=P.xticks()[0]
         yline=map(lambda x: slope*x+yint,xline)
         # Add line
-        ax1.plot(xline,yline,ls='--',color='grey')}
-    \alert<3>{# Set new x- and y-axis limits to data
+        ax1.plot(xline,yline,ls='--',color='grey')
+    # Set new x- and y-axis limits to data
     P.xlim((0.0,max(xdata)+(.15*max(xdata))))   # Give a little buffer
-    P.ylim((0.0,max(ydata)+(.15*max(ydata))))}
-    \alert<4>{# Add labels
+    P.ylim((0.0,max(ydata)+(.15*max(ydata))))
+    # Add labels
     ax1.set_title(title)
     ax1.set_xlabel(xlab)
     ax1.set_ylabel(ylab)
     # Save figure
-    P.savefig(path,dpi=100)}}
-        \end{code}
+    P.savefig(path,dpi=100)
+        \end{lstlisting}}
     \end{block}
     \scriptsize{\begin{itemize}
         \uncover<2->{\item Add a best fit line}
@@ -656,22 +644,22 @@ mode_clus_sg=subgraph(hartford_mc,[(a) for (a,b) in clus.items() if b==clus_coun
     \frametitle{Saving network data and adding node attributes}
     As shown, this is a simple one line operation
     \begin{block}{Output Hartford drug net data as an adjacency list}
-        \begin{code}
+        \scriptsize{\begin{lstlisting}[language=Python]
 nx.write_adjlist(hartford_mc,"../../data/hartford_mc_adj.txt")
-        \end{code}
-    \end{block}
+        \end{lstlisting}
+    \end{block}}
     Next, we will add the Eigenvector centrality of each node to the graph object
     \begin{block}{Adding node attributes}
-        \begin{code}
+        \scriptsize{\begin{lstlisting}
 def add_metric(G,met_dict):
     """Adds metric data to G from a dictionary keyed by node labels"""
-    \alert<2>{if(G.nodes().sort()==met_dict.keys().sort()):}
-        \alert<3>{for i in met_dict.keys():
+    if(G.nodes().sort()==met_dict.keys().sort()):
+        for i in met_dict.keys():
             G.add_node(i,metric=met_dict[i])
-        return G}
-    \alert<2>{else:
-        raise ValueError("Node labels do not match")}
-        \end{code}
+        return G
+    else:
+        raise ValueError("Node labels do not match")
+        \end{lstlisting}}
     \end{block}
     \begin{itemize}
         \uncover<2->{\item Quick error checking}
@@ -692,27 +680,27 @@ def add_metric(G,met_dict):
         \item One of the most useful, and frequently used, is the \texttt{CSV} library and the \texttt{DictWriter}
     \end{itemize}
     \begin{block}{}
-        \begin{code}
-\scriptsize{\alert<2>{import csv}
+        \scriptsize{\begin{lstlisting}[language=Python]
+import csv
 ...
-def csv_exporter(\alert<3>{data_dict,path}):
+def csv_exporter(data_dict,path):
     """Takes a dict of centralities keyed by column headers and exports 
     data as a CSV file"""
-    \alert<4>{# Create column header list
+    # Create column header list
     col_headers=["Actor"]
-    col_headers.extend(data_dict.keys())}
-    \alert<5>{# Create CSV writer and write column headers
+    col_headers.extend(data_dict.keys())
+    # Create CSV writer and write column headers
     writer=csv.DictWriter(open(path,"w"),fieldnames=col_headers)
-    writer.writerow(dict((h,h) for h in col_headers))}
-    \alert<6>{# Write each row of data
-    for j in data_dict[col_headers[1]].keys():}
-        \alert<7>{# Create a new dict for each row
+    writer.writerow(dict((h,h) for h in col_headers))
+    # Write each row of data
+    for j in data_dict[col_headers[1]].keys():
+        # Create a new dict for each row
         row=dict.fromkeys(col_headers)
         row["Actor"]=j
         for k in data_dict.keys():
             row[k]=data_dict[k][j]
-        writer.writerow(row)}}
-        \end{code}
+        writer.writerow(row)
+        \end{lstlisting}}
     \end{block}
 \end{frame}
 
@@ -769,16 +757,16 @@ def csv_exporter(\alert<3>{data_dict,path}):
         \includegraphics[width=6cm,clip,trim=2cm 2cm 2cm 2cm]{../images/networks/rand_circ.png}
     \end{center}
     \begin{block}{}
-        \begin{code}
+        \scriptsize{\begin{lstlisting}[language=Python]
 # Use subplots to draw random and circular layouts
 # of drug net side-by-side
-\alert<2>{fig1=P.figure(figsize=(9,4))
-fig1.add_subplot(121)}
-\alert<3>{nx.draw_random(hartford_mc,with_labels=False,node_size=60)}
-\alert<4>{fig1.add_subplot(122)
+fig1=P.figure(figsize=(9,4))
+fig1.add_subplot(121)
+nx.draw_random(hartford_mc,with_labels=False,node_size=60)
+fig1.add_subplot(122)
 nx.draw_circular(hartford_mc,with_labels=False,node_size=60)
-P.savefig("../../images/networks/rand_circ.png")}
-        \end{code}
+P.savefig("../../images/networks/rand_circ.png")
+        \end{lstlisting}}
     \end{block}
 \end{frame}
 
@@ -809,20 +797,20 @@ P.savefig("../../images/networks/rand_circ.png")}
     \begin{columns}
         \column{.7\textwidth}
             \begin{block}{25th percentile Eigenvector centrality actors}
-                \begin{code}
-\scriptsize{P.figure(figsize=(8,8))
-\alert<2>{# Find actors in 25th percentile
+                \scriptsize{\begin{lstlisting}[language=Python]
+P.figure(figsize=(8,8))
+# Find actors in 25th percentile
 max_eig=max([(b) for (a,b) in eig_cen.items()])
 s1=[(a) for (a,b) in eig_cen.items() if b>=.25*max_eig]
-s2=hartford_mc.nodes()}
-\alert<3>{# setdiff1d is a very useful NumPy function!
+s2=hartford_mc.nodes()
+# setdiff1d is a very useful NumPy function!
 s2=list(setdiff1d(s2,s1))       
-shells=[s1,s2]}    
-\alert<4>{# Calculate position and draw          
+shells=[s1,s2]
+# Calculate position and draw          
 shell_pos=shell_layout(hartford_mc,shells)
 draw_networkx(hartford_mc,shell_pos,with_labels=False,node_size=60)
-P.savefig("../../images/networks/shell.png")}}
-                \end{code}
+P.savefig("../../images/networks/shell.png")
+                \end{lstlisting}}
             \end{block}
         \column{.3\textwidth}
             \uncover<5->{\includegraphics[width=3.8cm,clip,trim=4cm 4cm 4cm 4cm]{../images/networks/shell.png}}
@@ -853,24 +841,24 @@ P.savefig("../../images/networks/shell.png")}}
 \begin{frame}[fragile]
     \frametitle{The code to add analysis to visualization}
     \begin{block}{More list comprehension and \texttt{matplotlib} colormaps}
-        \begin{code}
-\alert<2>{# Adding analysis to visualization
+        \scriptsize{\begin{lstlisting}[language=Python]
+# Adding analysis to visualization
 P.figure(figsize=(15,15))
 P.subplot(111,axisbg="lightgrey")
-spring_pos=nx.spring_layout(hartford_mc,iterations=1000)}
-\alert<3>{# Use betweeneess centrality for node color intensity
+spring_pos=nx.spring_layout(hartford_mc,iterations=1000)
+# Use betweeneess centrality for node color intensity
 bet_color=bet_cen.items()
 bet_color.sort()
-bet_color=[(b) for (a,b) in bet_color]}
-\alert<4>{# Use Eigenvector centrality to set node size
+bet_color=[(b) for (a,b) in bet_color]
+# Use Eigenvector centrality to set node size
 eig_size=eig_cen.items()
 eig_size.sort()
-eig_size=[((b)*2000)+20 for (a,b) in eig_size]}
-\alert<5>{# Use matplotlib's colormap for node intensity 
+eig_size=[((b)*2000)+20 for (a,b) in eig_size]
+# Use matplotlib's colormap for node intensity 
 draw_networkx(hartford_mc,spring_pos,node_color=bet_color,...
     ...cmap=P.cm.Greens,node_size=eig_size,with_labels=False)
-P.savefig("../../images/networks/analysis.png")}
-        \end{code}
+P.savefig("../../images/networks/analysis.png")
+        \end{lstlisting}}
     \end{block}
 \end{frame}
 

@@ -8,7 +8,7 @@
 
 \input{../tex/workshop_style.tex}
 
-\title{Module II - Why do SNA in \texttt{NetworkX}}
+\title{Module II - Why do SNA in NetworkX}
 \author{Drew Conway and Aric Hagberg}
 % \institute{\includegraphics[width = 4cm]{../images/logos/500px-NYU_logo.png}}
 \date{June 29, 2010}
@@ -24,16 +24,16 @@
 	Speed, Scalability \& Graph Types
 	\begin{itemize}
 	   \item Why speed and scalability matter
-	   \item Comparing \texttt{NetworkX} to other SNA tools 
-	   \item What can be a ``graph'' in \texttt{NetworkX}
+	   \item Comparing NetworkX to other SNA tools 
+	   \item What can be a ``graph'' in NetworkX
 	\end{itemize}
-	\uncover<2->{How \texttt{NetworkX} complements Python's scientific computing suite
+	\uncover<2->{How NetworkX complements Python's scientific computing suite
 	\begin{itemize}
-	   \item \texttt{SciPy}/\texttt{NumPy}
-	   \item \texttt{Matplotlib}
+	   \item SciPy/NumPy
+	   \item Matplotlib
 	   \item GraphViz
 	\end{itemize}}
-	\uncover<3->{Getting data in and out of \texttt{NetworkX}
+	\uncover<3->{Getting data in and out of NetworkX
 	\begin{itemize}
 	   \item I/O basics
 	   \item Pulling non-local data
@@ -77,7 +77,7 @@
         \end{tabular}
         \uncover<3->{\begin{columns}
             \column{.5\textwidth}
-            \texttt{NetworkX} is designed to handle data sets of the scale being generated today
+            NetworkX is designed to handle data sets of the scale being generated today
             \begin{itemize}
                 \scriptsize{\item 10M's nodes and 100M's edges
                 \item Read network data from local files, or from external sources
@@ -104,35 +104,35 @@
         \item Networks are collections of nodes and edges
         \item Nodes are static integers or strings, and edges are binary or continuous values
     \end{itemize}
-    \texttt{NetworkX} can represent \textbf{ANY} relationship supported by Python data types
+    NetworkX can represent \textbf{ANY} relationship supported by Python data types
     \vspace{2mm}
     \begin{columns}
         \column{.3\textwidth}
         \small{Suppose we had data, or a data generating process, that was a time-series
         \begin{itemize}
             \item Current tools need kludges or hacks to add this data
-            \item In \texttt{NetworkX}, we simply use the built-in Python \texttt{datetime} package to create a network of time-stamps
+            \item In NetworkX, we simply use the built-in Python \texttt{datetime} package to create a network of time-stamps
         \end{itemize}}
         \column{.7\textwidth}
         \begin{block}{}
-            \begin{code}
-\tiny{G=nx.DiGraph()
-\alert<2>{# Create datetime object nodes
+            \tiny{\begin{lstlisting}[language=Python]
+G=nx.DiGraph()
+# Create datetime object nodes
 for v in xrange(num_nodes):
     G.add_node(datetime.now())
-time_nodes=G.nodes()}
-\alert<3>{# Add edges with `time' attribut
+time_nodes=G.nodes()
+# Add edges with `time' attribut
 for i in xrange(num_nodes):
     draws=random.uniform(0,1,num_nodes)
     for j in xrange(num_nodes):
         if i!=j and draws[j]<=p:
             G.add_edge(time_nodes[i],time_nodes[j],time=datetime.now())
-...}
-\alert<4>{# target source datetime_created
+...
+# target source datetime_created
 2010-05-25 13:38:42.515323 2010-05-25 13:38:42.515492 
     \{`time': datetime.datetime(2010, 5, 25, 13, 38, 42, 515752)\}
-...}}
-                \end{code}
+...
+                \end{lstlisting}}
             \end{block}
     \end{columns}
 \end{frame}
@@ -198,21 +198,21 @@ for i in xrange(num_nodes):
 \label{sub:working_with_graphviz}
 
 \begin{frame}[fragile]
-    \frametitle{Exporting to GraphViz in \texttt{NetworkX}}
-    \texttt{NetworkX} is designed to be an open-source all-purpose network manipulation and analysis tool
+    \frametitle{Exporting to GraphViz in NetworkX}
+    NetworkX is designed to be an open-source all-purpose network manipulation and analysis tool
     \begin{itemize}
         \item Historically, the focus has not been on visualization
     \end{itemize}
-    While there are several options for visualization in \texttt{NetworkX}, perhaps the best is its ability to read and write \texttt{GraphViz} files
+    While there are several options for visualization in NetworkX, perhaps the best is its ability to read and write \texttt{GraphViz} files
     \begin{itemize}
         \item GraphViz is an open-source tool designed specifically for drawing graphs from the DOT language
-        \item \texttt{NetworkX} works directly with GV using the \texttt{pygraphviz} package
+        \item NetworkX works directly with GV using the \texttt{pygraphviz} package
     \end{itemize}
     \begin{columns}
         \column{.68\textwidth}
         \begin{block}{}
-            \begin{code}
-\tiny{\alert<2>{# Load Sampson monastery data from edgelist
+            \tiny{\begin{lstlisting}[language=Python]
+# Load Sampson monastery data from edgelist
 >>> g2=nx.read_edgelist("samp_like_el.txt",create_using=nx.DiGraph())
 >>> nx.info(g2)
 Name:                  
@@ -221,16 +221,16 @@ Number of nodes:       18
 Number of edges:       55
 Average in degree:     3.0556
 Average out degree:    3.0556}
-\alert<3>{# Convert to pygraphviz type
->>> g2_gv=nx.to_agraph(g2)}
-\alert<4>{# Output DOT file and draw using dot layout
+# Convert to pygraphviz type
+>>> g2_gv=nx.to_agraph(g2)
+# Output DOT file and draw using dot layout
 >>> g2_gv.write(``1samp_like_dot.dot'')
->>> g2_gv.draw(``samp_like.png'',prog=``dot'')}}
-            \end{code}
+>>> g2_gv.draw(``samp_like.png'',prog=``dot'')
+            \end{lstlisting}}
         \end{block}
         \column{.32\textwidth}
         \begin{center}
-            \uncover<5->{\includegraphics[height=4cm]{../images/networks/samp_like.png}}
+            \uncover<2->{\includegraphics[height=4cm]{../images/networks/samp_like.png}}
         \end{center}
     \end{columns}
 \end{frame}
@@ -246,14 +246,14 @@ Average out degree:    3.0556}
 \label{sub:data_i_o_basics}
 
 \begin{frame}[fragile]
-    \frametitle{Getting local data into \texttt{NetworkX}}
-    Getting data into \texttt{NetworkX} is as simple as a single line of code:
+    \frametitle{Getting local data into NetworkX}
+    Getting data into NetworkX is as simple as a single line of code:
     \begin{block}{Loading local data file}
-        \begin{code}
+        \begin{lstlisting}[language=Python]
 >>> G=read_edgelist("my_data.txt")
-        \end{code}
+        \end{lstlisting}
     \end{block}
-    \uncover<2->{Like many other network analysis platforms, \texttt{NetworkX} can parse a wide variety of network data types
+    \uncover<2->{Like many other network analysis platforms, NetworkX can parse a wide variety of network data types
     \begin{center}
         \begin{tabular}{cll}
             \multicolumn{3}{c}{\Large{Readable and Writeable Formats in NX}} \\ \hline \hline
@@ -296,7 +296,7 @@ Average out degree:    3.0556}
     \begin{itemize}
         \item Each service provides different relational context
         \item Data formats are generally JSON, Atom, XML, or some combination
-        \item Python has built-in parsers for all of these data types, which can easily be represented in \texttt{NetworkX}}
+        \item Python has built-in parsers for all of these data types, which can easily be represented in NetworkX}
     \end{itemize}}
     \uncover<3->{\alert{Next, we will go over an example of building network data using Google's SocialGraph API}}
 \end{frame}
@@ -330,7 +330,7 @@ Average out degree:    3.0556}
 
 \begin{frame}[plain]
     \frametitle{Module II Review}
-    Why use \texttt{NetworkX} to do SNA?
+    Why use NetworkX to do SNA?
     \begin{enumerate}
         \uncover<2->{\item Unlike many other tools, NX is designed to handle data on a scale relevant to modern problems}
         \uncover<3->{\item Most of the core algorithms in NX rely on extremely fast legacy code}
