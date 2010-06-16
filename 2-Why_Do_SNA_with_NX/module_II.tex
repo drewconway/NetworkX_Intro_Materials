@@ -6,7 +6,49 @@
 %
 \documentclass[xcolor=dvipsnames, 9pt]{beamer}
 
-\input{../tex/workshop_style.tex}
+\newenvironment{code}{\begin{semiverbatim} \begin{footnotesize}}
+{\end{footnotesize}\end{semiverbatim}}
+
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{natbib}
+\usepackage{color}
+\usepackage{pdfsync}
+\usepackage{chancery}
+\usepackage{movie15}
+\usepackage{pgfpages}
+\usepackage{fancyvrb}
+\usepackage{colortbl}
+\usepackage{multirow}
+
+% \definecolor{white}{rgb}{255,255,255}
+% \definecolor{darkred}{rgb}{0.5,0,0}
+% \definecolor{darkgreen}{rgb}{0,0.5,0}
+% \definecolor{lightblue}{rgb}{0,0,0.7}
+
+% \hypersetup{colorlinks,
+%   linkcolor=white,
+%   filecolor=darkred,
+%   urlcolor=lightblue,
+%   citecolor=darkblue}
+
+\usepackage{beamerthemesplit}
+\usetheme{Copenhagen}
+\usecolortheme[named=Violet]{structure} 
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{itemize items}[triangle]
+\setbeamertemplate{enumerate items}[default]
+%\setbeameroption{show notes on second screen}
+% \logo{\includegraphics[width = 2cm]{../images/logos/500px-NYU_logo.png}}
+
+\newcommand{\R}{\mathbb{R}}
+\renewcommand{\d}{\mathsf{d}}
+\newcommand{\dd}{\partial}
+\newcommand{\E}{\mathsf{E}}
+\newcommand{\bb}{\mathbf}
 
 \title{Module II - Why do SNA in \texttt{NetworkX}}
 \author{Drew Conway and Aric Hagberg}
@@ -19,7 +61,7 @@
   \titlepage  
 \end{frame}
 
-\begin{frame}[fragile]
+\begin{frame}
 	\frametitle{Agenda for Module II}
 	Speed, Scalability \& Graph Types
 	\begin{itemize}
@@ -175,7 +217,7 @@ for i in xrange(num_nodes):
             \item Provides many functions for working on arrays and matrices
             \item Very useful for representing relational data
         \end{itemize}}
-        \uncover<5->{Both \texttt{SciPy} and \texttt{NumPy} rely on the C library \texttt{LAPACK} for very fast implementation}
+        \uncover<5->{Both \textttt{SciPy} and \texttt{NumPy} rely on the C library \texttt{LAPACK} for very fast implementation}
         \column{.33\textwidth}
         \begin{center}
             \href{http://matplotlib.sourceforge.net/}{\includegraphics[width=3cm]{../images/logos/500px-Matplotlib_logo.png}}
@@ -258,7 +300,7 @@ Average out degree:    3.0556}
         \begin{tabular}{cll}
             \multicolumn{3}{c}{\Large{Readable and Writeable Formats in NX}} \\ \hline \hline
             & \textbf{Format} & \textbf{Description} \\ \hline
-            \multirow{3}{*}{\textbf{Standard}} & Edge list & 2 column, source $\rightarrow$ target \\
+            \multirow{3}{*}{\textbf{Standard}} & Edge list & 2 column, source\rightarrow target \\
             & Adjacency list & Each row 1st column as out-degree \\
             & Pajek & Edge list + node and edge attr \\ \hline
             \multirow{6}{*}{\textbf{Exotic}} & GML & Similar to DOT \\
@@ -267,11 +309,8 @@ Average out degree:    3.0556}
             & LEDA & Between edge list and Pajek \\
             & YAML & Readable data serialization \\
             & SparseGraph6 & Adjacency list variant
-
-
         \end{tabular}
     \end{center}}
-
 \end{frame}
 
 % subsection data_i_o_basics (end)
@@ -287,21 +326,20 @@ Average out degree:    3.0556}
         \scriptsize{
         \begin{tabular*}{.99\textwidth}{c|l|l}
         \textbf{Service} & \textbf{Data} & \textbf{API Docs} \\ \hline \hline
-        \includegraphics[height=4mm]{twitter_logo} & Following(ers), @-replies, date/time/geo & \url{http://apiwiki.twitter.com/} \\ \hline
-        \includegraphics[height=4mm]{facebook_logo} & Friends, Wall Posts, date/time & \url{http://developers.facebook.com/docs/api} \\ \hline
-        \includegraphics[height=4mm]{Newgooglelogo} & All SocialGraph relationships & \url{http://code.google.com/apis/socialgraph/} \\ \hline
-        \includegraphics[height=4mm]{foursquare} & Friends, Check-ins & \url{http://foursquare.com/developers/} \\ \hline
-        \includegraphics[height=3mm]{Hunch_com_logo} & ``Taste graph'', recommendations  & \url{http://hunch.com/developers/} \\ \hline
-        \includegraphics[height=4mm]{nytlogo} & Congressional votes, campaign finance & \url{http://developer.nytimes.com/docs}
+        \includegraphics[height=4mm]{../images/logos/twitter_logo.png} & Following(ers), @-replies, date/time/geo & \url{http://apiwiki.twitter.com/} \\ \hline
+        \includegraphics[height=4mm]{../images/logos/facebook_logo.jpg} & Friends, Wall Posts, date/time & \url{http://developers.facebook.com/docs/api} \\ \hline
+        \includegraphics[height=4mm]{../images/logos/Newgooglelogo.png} & All SocialGraph relationships & \url{http://code.google.com/apis/socialgraph/} \\ \hline
+        \includegraphics[height=4mm]{../images/logos/foursquare.png} & Friends, Check-ins & \url{http://foursquare.com/developers/} \\ \hline
+        \includegraphics[height=3mm]{../images/logos/Hunch_com_logo.png} & ``Taste graph", recommendations  & \url{http://hunch.com/developers/} \\ \hline
+        \includegraphics[height=4mm]{../images/logos/nytlogo.png} & Congressional votes, campaign finance & \url{http://developer.nytimes.com/docs}
         \end{tabular*}}
     \end{table}
     \uncover<2->{There is clearly no shortage of data
     \begin{itemize}
         \item Each service provides different relational context
         \item Data formats are generally JSON, Atom, XML, or some combination
-        \item Python has built-in parsers for all of these data types, which can easily be represented in \texttt{NetworkX}
-        \end{itemize}
-        }
+        \item Python has built-in parsers for all of these data types, which can easily be represented in \texttt{NetworkX}}
+    \end{itemize}}
     \uncover<3->{\alert{Next, we will go over an example of building network data using Google's SocialGraph API}}
 \end{frame}
 
