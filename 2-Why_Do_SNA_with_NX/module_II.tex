@@ -175,7 +175,7 @@ for i in xrange(num_nodes):
             \item Provides many functions for working on arrays and matrices
             \item Very useful for representing relational data
         \end{itemize}}
-        \uncover<5->{Both \textttt{SciPy} and \texttt{NumPy} rely on the C library \texttt{LAPACK} for very fast implementation}
+        \uncover<5->{Both \texttt{SciPy} and \texttt{NumPy} rely on the C library \texttt{LAPACK} for very fast implementation}
         \column{.33\textwidth}
         \begin{center}
             \href{http://matplotlib.sourceforge.net/}{\includegraphics[width=3cm]{../images/logos/500px-Matplotlib_logo.png}}
@@ -258,7 +258,7 @@ Average out degree:    3.0556}
         \begin{tabular}{cll}
             \multicolumn{3}{c}{\Large{Readable and Writeable Formats in NX}} \\ \hline \hline
             & \textbf{Format} & \textbf{Description} \\ \hline
-            \multirow{3}{*}{\textbf{Standard}} & Edge list & 2 column, source\rightarrow target \\
+            \multirow{3}{*}{\textbf{Standard}} & Edge list & 2 column, source$\rightarrow$ target \\
             & Adjacency list & Each row 1st column as out-degree \\
             & Pajek & Edge list + node and edge attr \\ \hline
             \multirow{6}{*}{\textbf{Exotic}} & GML & Similar to DOT \\
@@ -296,8 +296,9 @@ Average out degree:    3.0556}
     \begin{itemize}
         \item Each service provides different relational context
         \item Data formats are generally JSON, Atom, XML, or some combination
-        \item Python has built-in parsers for all of these data types, which can easily be represented in NetworkX}
+        \item Python has built-in parsers for all of these data types, which can easily be represented in NetworkX
     \end{itemize}}
+
     \uncover<3->{\alert{Next, we will go over an example of building network data using Google's SocialGraph API}}
 \end{frame}
 
