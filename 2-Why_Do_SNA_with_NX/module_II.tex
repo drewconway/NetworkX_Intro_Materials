@@ -121,7 +121,7 @@ G=nx.DiGraph()
 for v in xrange(num_nodes):
     G.add_node(datetime.now())
 time_nodes=G.nodes()
-# Add edges with `time' attribut
+# Add edges with `time' attribute
 for i in xrange(num_nodes):
     draws=random.uniform(0,1,num_nodes)
     for j in xrange(num_nodes):
@@ -130,7 +130,7 @@ for i in xrange(num_nodes):
 ...
 # target source datetime_created
 2010-05-25 13:38:42.515323 2010-05-25 13:38:42.515492 
-    \{`time': datetime.datetime(2010, 5, 25, 13, 38, 42, 515752)\}
+    {`time': datetime.datetime(2010, 5, 25, 13, 38, 42, 515752)}
 ...
                 \end{lstlisting}}
             \end{block}
@@ -281,7 +281,7 @@ Average out degree:    3.0556}
     Recently, there has been an explosion of resources for scraping social graph
     \begin{table}
         \centering
-        \scriptsize{
+        \tiny{
         \begin{tabular*}{.99\textwidth}{c|l|l}
         \textbf{Service} & \textbf{Data} & \textbf{API Docs} \\ \hline \hline
         \includegraphics[height=4mm]{../images/logos/twitter_logo.png} & Following(ers), @-replies, date/time/geo & \url{http://apiwiki.twitter.com/} \\ \hline

@@ -335,9 +335,9 @@ def snowball_round(G,seeds,myspace=False):
             \scriptsize{\begin{lstlisting}[language=Python]
 >>> in_cen=nx.in_degree_centrality(hartford)
 >>> in_cen
-\{1: 0.014218009478672987, 2: 0.018957345971563982,...
+{1: 0.014218009478672987, 2: 0.018957345971563982,...
 ...
-90: 0.0047393364928909956, 293: 0.0\}
+90: 0.0047393364928909956, 293: 0.0}
             \end{lstlisting}}
         \end{block}
         We can see that node \#90 has in-degree centrality 0.0047
@@ -387,7 +387,7 @@ def snowball_round(G,seeds,myspace=False):
 
 \begin{frame}[fragile]
     \frametitle{Finding most central actors}
-    To find the most central actors we will use Python's list comprehension technique to do basic data manipulation on our centrality dictionaries
+    To find the most central actors we will use Python's \alert{list comprehension} technique to do basic data manipulation on our centrality dictionaries
     \begin{columns}
         \column{.57\textwidth}
             \begin{block}{}
@@ -813,10 +813,10 @@ P.savefig("../../images/networks/shell.png")
                 \end{lstlisting}}
             \end{block}
         \column{.3\textwidth}
-            \uncover<5->{\includegraphics[width=3.8cm,clip,trim=4cm 4cm 4cm 4cm]{../images/networks/shell.png}}
+            \uncover<2->{\includegraphics[width=3.8cm,clip,trim=4cm 4cm 4cm 4cm]{../images/networks/shell.png}}
     \end{columns}
     \vspace{2mm}
-    \uncover<6->{Beyond layout, we may also want to add analytical data to our visualization}
+    \uncover<3->{Beyond layout, we may also want to add analytical data to our visualization}
 \end{frame}
 
 % subsection network_visualization_algorithms (end)
