@@ -508,11 +508,12 @@ Credit: Matteo Dell'Amico
 \centerline{\includegraphics[width=0.4\columnwidth]{model}}
 \end{frame}
 
+
 \begin{frame}[fragile]
 \frametitle{Feature: Compact code - building new generators}
 \begin{block}{}
 \tiny
-\begin{verbatim}
+\begin{lstlisting}
 import bisect
 import random
 from networkx import MultiDiGraph
@@ -536,17 +537,17 @@ def scale_free_graph(n, alpha=0.41,beta=0.54,delta_in=0.2,delta_out=0):
         r = random.random()
         if r < alpha:
             v = len(G) 
-            w = _choose_node(G, G.in_degree(with_labels=True),delta_in)
+            w = _choose_node(G, G.in_degree(),delta_in)
         elif r < alpha+beta:
-            v = _choose_node(G, G.out_degree(with_labels=True),delta_out)
-            w = _choose_node(G, G.in_degree(with_labels=True),delta_in)
+            v = _choose_node(G, G.out_degree(),delta_out)
+            w = _choose_node(G, G.in_degree(),delta_in)
         else:
-            v = _choose_node(G, G.out_degree(with_labels=True),delta_out)
+            v = _choose_node(G, G.out_degree(),delta_out)
             w = len(G) 
         G.add_edge(v,w)
     return G
 
-\end{verbatim}
+\end{lstlisting}
 \end{block}
 \end{frame}
 

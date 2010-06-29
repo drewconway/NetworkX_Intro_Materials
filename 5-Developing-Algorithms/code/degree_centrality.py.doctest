@@ -2,7 +2,7 @@
 >>> print G.edges()
 [(0, 1), (0, 2), (0, 3)]
 >>> print G.degree(0)
-2
+3
 >>> print len(G) # # of nodes
 4
 >>> print G.degree(0)/3

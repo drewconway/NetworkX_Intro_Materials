@@ -1,6 +1,6 @@
 import networkx as nx
 
-def ego(G,v):
+def ego(G,n):
     """Returns Graph of neighbors centered 
     at node n and including n.
 
