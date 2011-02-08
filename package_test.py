@@ -44,9 +44,6 @@ def test_packs(package_list):
 
         except ImportError:
             print "%12s-%-8s [missing]"%(p,v)
-            install=raw_input("Attmpt to install? [y/n]: ")
-            if(install.lower()=="y"):
-                exec("easy_install "+p)
         
 if __name__ == '__main__':
     print "Required"
