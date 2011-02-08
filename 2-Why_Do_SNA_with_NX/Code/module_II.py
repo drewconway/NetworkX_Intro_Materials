@@ -39,7 +39,7 @@ def bar_plot_1(data):
     # Create chart
     pos=range(1,len(x_labels)+1)
     P.figure(1,figsize=(11,7))
-    P.bar(left=pos,height=y_data,log=True,width=.6,color="lightgrey",edgecolor="indigo")
+    P.bar(left=pos,height=y_data,log=True,width=.6,color="lightgrey",edgecolor="#8094B6")
     pos2=[a+.3 for a in pos]
     P.xticks(pos2,x_labels)
     P.title("Evolution of network data size over time",fontsize="x-large")
