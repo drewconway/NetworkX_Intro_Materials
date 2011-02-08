@@ -21,8 +21,7 @@ required={'networkx':'1.1',
 
 optional={'nose':'0.11.1',
           'pyparsing':'1.5.0',
-          'pydot':'1.0.2',
-          'foo':'1.0'}
+          'pydot':'1.0.2'}
 
 def test_packs(package_list):
     """Tests to make sure you have all software for NetworkX workshop"""
